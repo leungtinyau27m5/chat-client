@@ -1,0 +1,9 @@
+a {
+  &:link,
+  &:visited,
+  &:hover,
+  a:active {
+    color: inherit;
+    text-decoration: none;
+  }
+}

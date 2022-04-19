@@ -1,0 +1,143 @@
+import {
+  Avatar,
+  Box,
+  ButtonBase,
+  styled,
+} from "@mui/material";
+import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
+import { useRecoilValue } from "recoil";
+import { userSelector } from "src/data/user.atom";
+import { getProfilePic } from "src/api/chat";
+import clsx from "clsx";
+import { menuItems } from "./constants";
+import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import MenuBoard from "./MenuBoard";
+import UserStatus from "./UserStatus";
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  maxWidth: 380,
+  width: "30vw",
+  display: "grid",
+  gridTemplateColumns: "54px 1fr",
+  height: "100%",
+  [theme.breakpoints.down("sm")]: {
+    width: 280,
+  },
+  "& .menu-bar": {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: theme.spacing(3.5),
+    paddingBottom: theme.spacing(3.5),
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(1.8),
+      paddingBottom: theme.spacing(1.8),
+    },
+    "& .header": {},
+    "& .body": {
+      flex: 1,
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      "& .menu-item": {
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        borderRight: "2px solid transparent",
+        transition: "all .3s ease-in-out",
+        "& button": {
+          minWidth: 0,
+          width: 42,
+          height: 42,
+          borderRadius: 12,
+          color: "darkslategrey",
+        },
+        "&.active": {
+          borderRight: `2px solid ${theme.palette.primary.main}`,
+          "& button": {
+            color: theme.palette.primary.main,
+          },
+        },
+        "&:not(:last-of-type)": {
+          marginBottom: theme.spacing(0.5),
+        },
+      },
+    },
+    "& .trailing": {},
+  },
+}));
+
+const MainMenu = () => {
+  const userData = useRecoilValue(userSelector);
+  const location = useLocation();
+
+  return (
+    <StyledBox component="aside" className="main-menu">
+      <Box className="menu-bar">
+        <Box className="header">
+          <AcUnitRoundedIcon
+            sx={{
+              color: (theme) => theme.palette.primary.dark,
+              width: 32,
+              height: 32,
+            }}
+          />
+        </Box>
+        <Box className="body">
+          {menuItems.map((item) => (
+            <Box
+              key={item.path}
+              className={clsx("menu-item", {
+                active: location.pathname === item.path,
+              })}
+            >
+              <Link to={item.path}>
+                <ButtonBase>{item.icon}</ButtonBase>
+              </Link>
+            </Box>
+          ))}
+        </Box>
+        <Box className="trailing">
+          {userData && userData.profile_pic && (
+            <Avatar src={getProfilePic(userData.profile_pic)} />
+          )}
+        </Box>
+      </Box>
+      {userData && (
+        <MenuBoard>
+          <Box className="header">
+            <UserStatus userData={userData} />
+          </Box>
+        </MenuBoard>
+      )}
+      {/* {userData && (
+        <Box className="menu-board">
+          <Box className="header">
+            <Box className="user-avatar-container">
+              <Avatar
+                src={
+                  userData.profile_pic
+                    ? getProfilePic(userData.profile_pic)
+                    : ""
+                }
+              />
+              <Typography variant="h5" align="center">
+                {userData.username}
+              </Typography>
+              <Box className=""></Box>
+            </Box>
+            <Box className="user-status-container"></Box>
+            <Box className="setting-container"></Box>
+          </Box>
+          <Box className="body"></Box>
+        </Box>
+      )} */}
+    </StyledBox>
+  );
+};
+
+export default MainMenu;
