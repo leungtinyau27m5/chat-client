@@ -12,6 +12,8 @@ export const StyledTextField = styled(TextField)(() => ({
     },
     [`&.${filledInputClasses.adornedEnd}`]: {
       [`& .${filledInputClasses.input}`]: {
+        paddingTop: "1rem",
+        paddingBottom: "1rem",
         marginRight: 12,
       },
     },

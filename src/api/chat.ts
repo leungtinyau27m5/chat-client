@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import type { AxiosRequestConfig } from "axios";
 import { ChatAxios } from "./chat.proto";
 
@@ -28,7 +28,7 @@ export const postRegister = () => {
 };
 
 export const getByToken = (token: string, config?: AxiosRequestConfig) => {
-  return chatAxios.post<ChatAxios.Login.Response>("/user", { token }, config);
+  return chatAxios.get<ChatAxios.Login.Response>("/user", config);
 };
 
 export const getProfilePic = (param: string) =>

@@ -1,9 +1,4 @@
-import {
-  Avatar,
-  Box,
-  ButtonBase,
-  styled,
-} from "@mui/material";
+import { Avatar, Box, ButtonBase, styled } from "@mui/material";
 import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
 import { useRecoilValue } from "recoil";
 import { userSelector } from "src/data/user.atom";
@@ -14,15 +9,15 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import MenuBoard from "./MenuBoard";
 import UserStatus from "./UserStatus";
+import GroupChatList from "../chatList/GroupChatList";
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  maxWidth: 380,
-  width: "30vw",
+  width: 380,
   display: "grid",
-  gridTemplateColumns: "54px 1fr",
+  gridTemplateColumns: "60px 1fr",
   height: "100%",
   [theme.breakpoints.down("sm")]: {
-    width: 280,
+    width: "100vw",
   },
   "& .menu-bar": {
     display: "flex",
@@ -31,6 +26,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
     alignItems: "center",
     paddingTop: theme.spacing(3.5),
     paddingBottom: theme.spacing(3.5),
+    borderCollapse: "collapse",
     [theme.breakpoints.down("sm")]: {
       paddingTop: theme.spacing(1.8),
       paddingBottom: theme.spacing(1.8),
@@ -48,6 +44,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
         display: "flex",
         justifyContent: "center",
         borderRight: "2px solid transparent",
+        borderCollapse: "collapse",
         transition: "all .3s ease-in-out",
         "& button": {
           minWidth: 0,
@@ -60,6 +57,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
           borderRight: `2px solid ${theme.palette.primary.main}`,
           "& button": {
             color: theme.palette.primary.main,
+            backgroundColor: theme.palette.primary.light,
           },
         },
         "&:not(:last-of-type)": {
@@ -111,6 +109,9 @@ const MainMenu = () => {
         <MenuBoard>
           <Box className="header">
             <UserStatus userData={userData} />
+          </Box>
+          <Box className="body">
+            {location.pathname === "/group" && <GroupChatList />}
           </Box>
         </MenuBoard>
       )}

@@ -23,14 +23,33 @@ const StyledBox = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   rowGap: theme.spacing(1.1),
-  [`& .${avatarClasses.root}`]: {
-    width: 110,
-    height: 110,
+  "& .avatar-container": {
+    position: "relative",
+    [`& .${avatarClasses.root}`]: {
+      width: 110,
+      height: 110,
+    },
+    "& .status-dot": {
+      position: "absolute",
+      bottom: 10,
+      right: 10,
+      width: 12,
+      height: 12,
+      padding: 1,
+      display: "flex",
+      borderRadius: "50%",
+      backgroundColor: "white",
+      "& > span": {
+        width: "100%",
+        height: "100%",
+        borderRadius: "inherit",
+      },
+    },
   },
   "& .status-inner": {
     width: "100%",
-    display: 'flex',
-    justifyContent: 'center'
+    display: "flex",
+    justifyContent: "center",
   },
 }));
 
@@ -66,9 +85,19 @@ const UserStatus = (props: UserStatusProps) => {
 
   return (
     <StyledBox className="user-status-container">
-      <Avatar
-        src={userData.profile_pic ? getProfilePic(userData?.profile_pic) : ""}
-      />
+      <Box className="avatar-container">
+        <Avatar
+          src={userData.profile_pic ? getProfilePic(userData?.profile_pic) : ""}
+        />
+        <Box className="status-dot">
+          <Box
+            component="span"
+            sx={{
+              backgroundColor: alpha(statusColor.current, 1),
+            }}
+          ></Box>
+        </Box>
+      </Box>
       <Typography variant="h5" align="center">
         {userData?.username}
       </Typography>

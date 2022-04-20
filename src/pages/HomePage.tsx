@@ -7,6 +7,7 @@ import { getByToken } from "src/api/chat";
 import { ExpressCodeMap } from "src/api/express.proto";
 import MainMenu from "src/components/mainMenu";
 import { userSelector } from "src/data/user.atom";
+import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
 
 const HomePage = () => {
@@ -21,7 +22,7 @@ const HomePage = () => {
         const result = await getByToken(token);
         const { data, message, code } = result.data;
         if (code === ExpressCodeMap.success && data) {
-          setUserData(data);
+          setUserData({ ...data, token });
           return;
         }
         enqueueSnackbar(message, {
@@ -46,14 +47,14 @@ const HomePage = () => {
       navigate("/login");
       return;
     }
-    getUserData(token);
-  }, [getUserData, navigate, token]);
+    if (!userData) getUserData(token);
+  }, [getUserData, navigate, token, userData]);
 
   return (
-    <>
+    <ChatSocketProvider>
       <MainMenu />
       <Outlet />
-    </>
+    </ChatSocketProvider>
   );
 };
 

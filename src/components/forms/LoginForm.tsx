@@ -64,8 +64,7 @@ const LoginForm = (props: LoginFormProps) => {
       });
       const { code, data, message, token } = result.data;
       if (code === ExpressCodeMap.success) {
-        if (token) setCookie("jwt", token);
-        if (data) setUserData(data);
+        if (data && token) setUserData({ ...data, token });
         return;
       }
       enqueueSnackbar(message, {
