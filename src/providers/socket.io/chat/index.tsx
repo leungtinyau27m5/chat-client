@@ -14,6 +14,7 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import { Button } from "@mui/material";
 import { chatListAtom, chatMetaAtom } from "src/data/chatList.atom";
 import { Data } from "src/shared/data.proto";
+import MessageHandler from "./handlers/message";
 
 const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const { current: wss } = useRef<MySocket>(
@@ -53,7 +54,7 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
         });
       }
     },
-    []
+    [setChatList]
   );
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
         });
         return;
       }
+      setIsLogin(true);
       console.log(res);
     };
     wss.on("connect", handleConnect);
@@ -109,8 +111,15 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   }, [userData, wss]);
 
   return (
-    <ChatSocketContext.Provider value={{}}>
+    <ChatSocketContext.Provider
+      value={{
+        wss,
+        connected,
+        isLogin,
+      }}
+    >
       {props.children}
+      {wss && <MessageHandler wss={wss} />}
     </ChatSocketContext.Provider>
   );
 };

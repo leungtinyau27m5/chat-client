@@ -1,5 +1,11 @@
+import { Outlet } from "react-router-dom";
+
 const GroupPage = () => {
-  return <></>;
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 };
 
 export default GroupPage;

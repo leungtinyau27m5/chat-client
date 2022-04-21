@@ -17,7 +17,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   gridTemplateColumns: "60px 1fr",
   height: "100%",
   [theme.breakpoints.down("sm")]: {
-    width: "100vw",
+    width: "85vw",
   },
   "& .menu-bar": {
     display: "flex",
@@ -90,7 +90,7 @@ const MainMenu = () => {
             <Box
               key={item.path}
               className={clsx("menu-item", {
-                active: location.pathname === item.path,
+                active: location.pathname.match(item.path),
               })}
             >
               <Link to={item.path}>
@@ -111,32 +111,10 @@ const MainMenu = () => {
             <UserStatus userData={userData} />
           </Box>
           <Box className="body">
-            {location.pathname === "/group" && <GroupChatList />}
+            {location.pathname.match("/group") && <GroupChatList />}
           </Box>
         </MenuBoard>
       )}
-      {/* {userData && (
-        <Box className="menu-board">
-          <Box className="header">
-            <Box className="user-avatar-container">
-              <Avatar
-                src={
-                  userData.profile_pic
-                    ? getProfilePic(userData.profile_pic)
-                    : ""
-                }
-              />
-              <Typography variant="h5" align="center">
-                {userData.username}
-              </Typography>
-              <Box className=""></Box>
-            </Box>
-            <Box className="user-status-container"></Box>
-            <Box className="setting-container"></Box>
-          </Box>
-          <Box className="body"></Box>
-        </Box>
-      )} */}
     </StyledBox>
   );
 };

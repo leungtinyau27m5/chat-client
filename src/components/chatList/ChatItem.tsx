@@ -1,4 +1,7 @@
 import { Avatar, Box, ListItemButton, styled, Typography } from "@mui/material";
+import clsx from "clsx";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getProfilePic } from "src/api/chat";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
 
@@ -8,8 +11,10 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
   columnGap: theme.spacing(1.5),
   height: 80,
   borderRadius: 12,
-  paddingTop: theme.spacing(0.35),
-  paddingBottom: theme.spacing(0.35),
+  padding: "0.35rem 0.5rem",
+  "&.active": {
+    backgroundColor: "rgba(15, 15, 15, 0.1)",
+  },
   "&:not(:last-of-type)": {
     marginBottom: theme.spacing(0.25),
   },
@@ -17,7 +22,7 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
   "& .body": {
     display: "flex",
     flexDirection: "column",
-    justifyContent: 'space-evenly',
+    justifyContent: "space-evenly",
     "& .trim-text": {
       textOverflow: "ellipsis",
       overflow: "hidden",
@@ -31,11 +36,22 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
 }));
 
 const ChatItem = (props: ChatItemProps) => {
-  const { data } = props;
+  const { data, isActive } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleOnClick = () => {
+    const updatedParams = new URLSearchParams(searchParams.toString());
+    updatedParams.set("id", data.id.toString());
+    setSearchParams(updatedParams);
+  };
+
   return (
-    <StyledItem className="chat-item">
+    <StyledItem
+      className={clsx("chat-item", { active: isActive })}
+      onClick={handleOnClick}
+    >
       <Box className="head">
-        <Avatar src={data.profile_pic || ""} />
+        <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
       </Box>
       <Box className="body">
         <Typography variant="subtitle1" fontWeight="bold" className="trim-text">
@@ -71,6 +87,7 @@ const ChatItem = (props: ChatItemProps) => {
 
 export interface ChatItemProps {
   data: Data.Chat;
+  isActive: boolean;
 }
 
 export default ChatItem;

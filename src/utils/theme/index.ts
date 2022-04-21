@@ -12,18 +12,5 @@ export default createTheme({
       light: "#DFE1F9",
     },
   },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        "html, body": {
-          margin: 0,
-          padding: 0,
-          height: "-webkit-fill-available",
-        },
-        "#root": {
-          height: "100%",
-        },
-      },
-    },
-  },
+  components: {},
 });

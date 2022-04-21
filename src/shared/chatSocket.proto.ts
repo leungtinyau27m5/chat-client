@@ -18,9 +18,20 @@ export declare module SocketEvents {
             };
           }
     ) => void;
+    "message:update": (
+      data: {
+        list: Data.Message[];
+        meta: {
+          offset: number;
+          limit: number;
+          total: number;
+        };
+      }[]
+    ) => void;
   }
   interface EmitEvents {
     "user:login": (token: string) => void;
+    "message:send": (chatId: number, data: Data.SendMessage) => void;
   }
 }
 

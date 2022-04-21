@@ -1,3 +1,4 @@
+import { Box, Drawer, Hidden, IconButton, styled } from "@mui/material";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect } from "react";
@@ -6,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { getByToken } from "src/api/chat";
 import { ExpressCodeMap } from "src/api/express.proto";
 import MainMenu from "src/components/mainMenu";
+import { menuAtom } from "src/data/menu.atom";
 import { userSelector } from "src/data/user.atom";
 import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
@@ -13,8 +15,11 @@ import { getCookie } from "src/utils/storages";
 const HomePage = () => {
   const [userData, setUserData] = useRecoilState(userSelector);
   const { enqueueSnackbar } = useSnackbar();
+  const [showMenu, setShowMenu] = useRecoilState(menuAtom);
   const navigate = useNavigate();
   const token = getCookie("jwt");
+
+  const toggleMenu = () => setShowMenu((state) => !state);
 
   const getUserData = useCallback(
     async (token: string) => {
@@ -52,7 +57,15 @@ const HomePage = () => {
 
   return (
     <ChatSocketProvider>
-      <MainMenu />
+      <Hidden mdDown>
+        <MainMenu />
+      </Hidden>
+      <Hidden mdUp>
+        <Drawer anchor="left" open={showMenu} onClose={() => toggleMenu()}>
+          <MainMenu />
+        </Drawer>
+      </Hidden>
+
       <Outlet />
     </ChatSocketProvider>
   );
