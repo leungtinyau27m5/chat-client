@@ -18,16 +18,7 @@ export declare module SocketEvents {
             };
           }
     ) => void;
-    "message:update": (
-      data: {
-        list: Data.Message[];
-        meta: {
-          offset: number;
-          limit: number;
-          total: number;
-        };
-      }[]
-    ) => void;
+    "message:update": (data: { chatId: number; list: Data.Message[] }) => void;
     "message:list": (
       code: SocketCodeMap,
       res?:

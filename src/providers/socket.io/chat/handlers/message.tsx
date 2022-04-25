@@ -19,22 +19,23 @@ const MessageHandler = (props: MessageHandlerProps) => {
   const handleMessageUpdate: SocketEvents.ListenEvents["message:update"] =
     useCallback(
       (data) => {
-        let newData = {} as { [key: number]: Data.Message[] };
-        Object.keys(messageList).forEach((key) => {
-          const nKey = Number(key);
-          newData[nKey] = [...messageList[nKey]];
+        const { chatId, list } = data;
+        const target = messageList[chatId] ? [...messageList[chatId]] : [];
+        let count = {} as { [key: number]: number };
+        list.forEach((message) => {
+          target.push(message);
+          if (count[message.chat_id]) {
+            count[message.chat_id] += 1;
+          } else {
+            count[message.chat_id] = 0;
+          }
         });
-        data.forEach((ele) => {
-          const { list } = ele;
-          list.forEach((message) => {
-            if (newData[message.chat_id]) {
-              newData[message.chat_id].push(message);
-            } else {
-              newData[message.chat_id] = [message];
-            }
-          });
+        setMessageList((state) => {
+          return {
+            ...state,
+            [chatId]: target,
+          };
         });
-        setMessageList(newData);
       },
       [messageList, setMessageList]
     );
@@ -63,10 +64,11 @@ const MessageHandler = (props: MessageHandlerProps) => {
         }));
         setMessageListMeta((state) => {
           const newMetaData = { ...state };
+          console.log(unique)
           newMetaData[chatId] = {
             offset: meta.offset,
             total: meta.total,
-            page: (newList.length % 20) + 1,
+            page: Math.ceil(unique.length / 20),
           };
 
           return newMetaData;

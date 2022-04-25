@@ -1,18 +1,6 @@
 import { atom, DefaultValue, selectorFamily } from "recoil";
 import { Data } from "src/shared/data.proto";
 
-export type ChatRoomMeta = {
-  top: number;
-  unread: number;
-};
-
-export const initChatRoomMeta = () => {
-  return {
-    top: 0,
-    unread: 0,
-  };
-};
-
 export const chatListAtom = atom<{ [key: number]: Data.Chat }>({
   key: "chatListAtom",
   default: {},
@@ -27,20 +15,17 @@ export const chatMetaAtom = atom({
   },
 });
 
-export const chatRoomMetaAtom = atom<{ [key: number]: ChatRoomMeta | null }>({
-  key: "chatRoomMetaAtom",
+export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
+  key: "chatRoomScrollTopAtom",
   default: {},
 });
 
-export const chatRoomMetaSelectorById = selectorFamily<
-  ChatRoomMeta | null,
-  number
->({
+export const chatRoomScrollTopSelectorById = selectorFamily<number | null, number>({
   key: "chatRoomMetaSelectorById",
   get:
     (id) =>
     ({ get }) => {
-      const data = get(chatRoomMetaAtom);
+      const data = get(chatRoomScrollTopAtom);
       if (data[id]) return data[id];
       return null;
     },
@@ -48,13 +33,13 @@ export const chatRoomMetaSelectorById = selectorFamily<
     (id) =>
     ({ set }, newValue) => {
       if (newValue instanceof DefaultValue || newValue === null) {
-        set(chatRoomMetaAtom, (state) => ({
+        set(chatRoomScrollTopAtom, (state) => ({
           ...state,
           [id]: null,
         }));
         return;
       }
-      set(chatRoomMetaAtom, (state) => ({
+      set(chatRoomScrollTopAtom, (state) => ({
         ...state,
         [id]: newValue,
       }));

@@ -20,7 +20,6 @@ const MessageList = (props: MessageListProps) => {
     const items = itemRefs.current;
     return () => {
       if (items[0] && bodyEl.scrollTop < 80) {
-        console.log("first item ??");
         bodyEl.scrollTo({
           top: items[0].offsetTop - 80,
         });
@@ -29,6 +28,7 @@ const MessageList = (props: MessageListProps) => {
   }, [bodyEl, messages]);
 
   useEffect(() => {
+    console.log(listMetaData);
     if (listMetaData && listMetaData.page === 1) {
       bodyEl.scrollTo({
         top: bodyEl.scrollHeight,
