@@ -1,7 +1,9 @@
 import { Avatar, Box, ListItemButton, styled, Typography } from "@mui/material";
 import clsx from "clsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import { getProfilePic } from "src/api/chat";
+import { lastMessageSelector } from "src/data/messageList.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
 
@@ -38,6 +40,7 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
 const ChatItem = (props: ChatItemProps) => {
   const { data, isActive } = props;
   const [searchParams, setSearchParams] = useSearchParams();
+  const lastMessage = useRecoilValue(lastMessageSelector(data.id));
 
   const handleOnClick = () => {
     const updatedParams = new URLSearchParams(searchParams.toString());
@@ -57,19 +60,23 @@ const ChatItem = (props: ChatItemProps) => {
         <Typography variant="subtitle1" fontWeight="bold" className="trim-text">
           {data.name}
         </Typography>
-        <Typography variant="caption" className="trim-text">
-          {data.message
-            ? data.message
-            : data.media && data.meta
-            ? "Media"
-            : `No Message Yet 
-            sdfs asdfjioasef
-            asfeasf
-            asdjfiosajef
-            asfjiosaef
-            jifoasef
-            sadjfioasejfo`}
-        </Typography>
+        {lastMessage ? (
+          <Typography variant="caption" className="trim-text">
+            {lastMessage.message
+              ? lastMessage.message
+              : lastMessage.media && lastMessage.meta
+              ? "Media"
+              : `No Message Yet`}
+          </Typography>
+        ) : (
+          <Typography variant="caption" className="trim-text">
+            {data.message
+              ? data.message
+              : data.media && data.media
+              ? "Media"
+              : "No Message Yet"}
+          </Typography>
+        )}
       </Box>
       <Box className="trailing">
         <Typography

@@ -1,6 +1,18 @@
 import { atom, DefaultValue, selectorFamily } from "recoil";
 import { Data } from "src/shared/data.proto";
 
+export type ChatRoomMeta = {
+  top: number;
+  unread: number;
+};
+
+export const initChatRoomMeta = () => {
+  return {
+    top: 0,
+    unread: 0,
+  };
+};
+
 export const chatListAtom = atom<{ [key: number]: Data.Chat }>({
   key: "chatListAtom",
   default: {},
@@ -15,6 +27,40 @@ export const chatMetaAtom = atom({
   },
 });
 
+export const chatRoomMetaAtom = atom<{ [key: number]: ChatRoomMeta | null }>({
+  key: "chatRoomMetaAtom",
+  default: {},
+});
+
+export const chatRoomMetaSelectorById = selectorFamily<
+  ChatRoomMeta | null,
+  number
+>({
+  key: "chatRoomMetaSelectorById",
+  get:
+    (id) =>
+    ({ get }) => {
+      const data = get(chatRoomMetaAtom);
+      if (data[id]) return data[id];
+      return null;
+    },
+  set:
+    (id) =>
+    ({ set }, newValue) => {
+      if (newValue instanceof DefaultValue || newValue === null) {
+        set(chatRoomMetaAtom, (state) => ({
+          ...state,
+          [id]: null,
+        }));
+        return;
+      }
+      set(chatRoomMetaAtom, (state) => ({
+        ...state,
+        [id]: newValue,
+      }));
+    },
+});
+
 export const chatListSelectorByType = selectorFamily<
   Data.Chat[],
   "group" | "private"
@@ -24,7 +70,6 @@ export const chatListSelectorByType = selectorFamily<
     (type) =>
     ({ get }) => {
       const raw = get(chatListAtom);
-      console.log(raw);
       const list = Object.keys(raw).reduce((arr, key) => {
         const nKey = Number(key);
         if (raw[nKey].type === type) arr.push(raw[nKey]);

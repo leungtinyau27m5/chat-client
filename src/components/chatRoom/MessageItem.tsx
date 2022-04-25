@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { forwardRef, Ref, useEffect, useRef } from "react";
 import { Avatar, Box, styled, Typography } from "@mui/material";
 import { Data } from "src/shared/data.proto";
 import { useRecoilValue } from "recoil";
@@ -70,40 +70,44 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const MessageItem = (props: MessageItemProps) => {
-  const { data, isMe } = props;
-  const friendData = useRecoilValue(friendSelectorById(data.user_id));
-  return (
-    <StyledBox className={clsx("message-item", { "is-me": isMe })}>
-      <Box className="inner">
-        <Box className="icon-wrapper">
-          <Avatar
-            src={data.profile_pic ? getProfilePic(data.profile_pic) : ""}
-            sx={{
-              width: 30,
-              height: 30,
-            }}
-          />
-        </Box>
-        <Box className="message-wrapper-outer">
-          <Box className="message-meta">
-            <Typography component="span" variant="caption">
-              {data.username},&nbsp;
-            </Typography>
-            <Typography component="span" variant="caption">
-              {getMsgDate(data.created)}
-            </Typography>
+const MessageItem = forwardRef(
+  (props: MessageItemProps, ref: Ref<HTMLDivElement>) => {
+    const { data, isMe } = props;
+    const friendData = useRecoilValue(friendSelectorById(data.user_id));
+
+    return (
+      <StyledBox className={clsx("message-item", { "is-me": isMe })} ref={ref}>
+        <Box className="inner">
+          <Box className="icon-wrapper">
+            <Avatar
+              src={data.profile_pic ? getProfilePic(data.profile_pic) : ""}
+              sx={{
+                width: 30,
+                height: 30,
+              }}
+            />
           </Box>
-          <Box className="message-wrapper-inner">{data.message}</Box>
+          <Box className="message-wrapper-outer">
+            <Box className="message-meta">
+              <Typography component="span" variant="caption">
+                {data.username},&nbsp;
+              </Typography>
+              <Typography component="span" variant="caption">
+                {getMsgDate(data.created)}
+              </Typography>
+            </Box>
+            <Box className="message-wrapper-inner">{data.message}</Box>
+          </Box>
         </Box>
-      </Box>
-    </StyledBox>
-  );
-};
+      </StyledBox>
+    );
+  }
+);
 
 export interface MessageItemProps {
   data: Data.Message;
   isMe: boolean;
+  setFirstRef?: (ele: HTMLDivElement) => void;
 }
 
 export default MessageItem;

@@ -1,32 +1,60 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { messageListSelectorByChatId } from "src/data/messageList.atom";
-import { Box } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import {
+  messageListMetaSelectorByChatId,
+  messageListSelectorByChatId,
+} from "src/data/messageList.atom";
 import MessageItem from "./MessageItem";
 import { userSelector } from "src/data/user.atom";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { MySocket } from "src/shared/chatSocket.proto";
+import { getSession } from "src/utils/storages";
 
 const MessageList = (props: MessageListProps) => {
-  const { chatId } = props;
-  const [messages, setMessages] = useRecoilState(
-    messageListSelectorByChatId({
-      chatId,
-    })
-  );
+  const { chatId, wss, bodyEl } = props;
+  const messages = useRecoilValue(messageListSelectorByChatId({ chatId }));
   const userData = useRecoilValue(userSelector);
+  const listMetaData = useRecoilValue(messageListMetaSelectorByChatId(chatId));
+  const itemRefs = useRef<HTMLDivElement[]>([]);
+
+  useLayoutEffect(() => {
+    const items = itemRefs.current;
+    return () => {
+      if (items[0] && bodyEl.scrollTop < 80) {
+        console.log("first item ??");
+        bodyEl.scrollTo({
+          top: items[0].offsetTop - 80,
+        });
+      }
+    };
+  }, [bodyEl, messages]);
+
+  useEffect(() => {
+    if (listMetaData && listMetaData.page === 1) {
+      bodyEl.scrollTo({
+        top: bodyEl.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [bodyEl, chatId, listMetaData]);
+
   return (
-    <Box>
-      {messages.map((msg) => (
+    <>
+      {messages.map((msg, index) => (
         <MessageItem
           key={msg.id}
           data={msg}
           isMe={userData?.id === msg.user_id}
+          ref={(el) => el && (itemRefs.current[index] = el)}
         />
       ))}
-    </Box>
+    </>
   );
 };
 
 export interface MessageListProps {
   chatId: number;
+  wss: MySocket;
+  bodyEl: HTMLDivElement;
 }
 
 export default MessageList;

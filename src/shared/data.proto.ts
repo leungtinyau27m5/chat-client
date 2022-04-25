@@ -18,6 +18,7 @@ export declare namespace Data {
     media: string | null;
     meta: null | object;
     last_msg_time: string | null;
+    last_seen: string | null;
   }
   interface Message {
     id: number;

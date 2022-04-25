@@ -28,22 +28,44 @@ export declare module SocketEvents {
         };
       }[]
     ) => void;
+    "message:list": (
+      code: SocketCodeMap,
+      res?:
+        | Error
+        | {
+            chatId: number;
+            list: Data.Message[];
+            meta: {
+              offset: number;
+              limit: number;
+              total: number;
+            };
+          }
+    ) => void;
   }
   interface EmitEvents {
     "user:login": (token: string) => void;
     "message:send": (chatId: number, data: Data.SendMessage) => void;
+    "message:list": (
+      chatId: number,
+      options: {
+        offset?: number;
+        limit?: number;
+      }
+    ) => void;
   }
 }
 
 export enum SocketCodeMap {
+  success,
   jwtValid,
   jwtInvalid,
   undefinedUser,
   undefinedGroup,
   unauthorizedUser,
   unauthorizedRole,
+  insertFail,
   unknown,
-  success,
 }
 
 export type MySocket = Socket<
