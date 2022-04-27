@@ -35,7 +35,8 @@ const MessageList = (props: MessageListProps) => {
   const userData = useRecoilValue(userSelector);
   const listMetaData = useRecoilValue(messageListMetaSelectorByChatId(chatId));
   const itemRefs = useRef<{ [key: number]: HTMLDivElement }>({});
-  const [dateMark, setDateMark] = useState("");
+  // const [dateMark, setDateMark] = useState("");
+  const dateMark = useRef<HTMLDivElement>(null);
   const arrangedMessages = useMemo(() => {
     const list = {} as { [key: string]: typeof messages };
     messages.forEach((ele) => {
@@ -53,7 +54,8 @@ const MessageList = (props: MessageListProps) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const { date } = (entry.target as HTMLElement).dataset;
-          setDateMark(date || "");
+          const target = dateMark.current;
+          if (target && date) target.innerText = date;
         }
       });
     },
@@ -107,7 +109,7 @@ const MessageList = (props: MessageListProps) => {
           ))}
         </ItemContainer>
       ))}
-      <Box className="current-date-mark">{dateMark}</Box>
+      <Box className="current-date-mark" ref={dateMark}></Box>
     </>
   );
 };
