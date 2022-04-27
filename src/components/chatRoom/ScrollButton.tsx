@@ -6,9 +6,8 @@ import clsx from "clsx";
 
 const StyledButton = styled(Button)(() => ({
   position: "absolute",
-  bottom: 100,
-  right: 8,
-  transform: 'translateX(-50%)',
+  bottom: 80,
+  right: 16,
   borderRadius: "50%",
   width: 40,
   height: 40,

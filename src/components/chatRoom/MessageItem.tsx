@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useEffect, useRef } from "react";
+import { forwardRef, Ref, useEffect, useLayoutEffect, useRef } from "react";
 import { Avatar, Box, styled, Typography } from "@mui/material";
 import { Data } from "src/shared/data.proto";
 import { useRecoilValue } from "recoil";
@@ -6,6 +6,7 @@ import { friendSelectorById } from "src/data/friend.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { getProfilePic } from "src/api/chat";
 import clsx from "clsx";
+import { formatDate } from "src/helpers/common";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: "1rem",
@@ -74,9 +75,14 @@ const MessageItem = forwardRef(
   (props: MessageItemProps, ref: Ref<HTMLDivElement>) => {
     const { data, isMe } = props;
     const friendData = useRecoilValue(friendSelectorById(data.user_id));
+    const msgDate = getMsgDate(data.created);
 
     return (
-      <StyledBox className={clsx("message-item", { "is-me": isMe })} ref={ref}>
+      <StyledBox
+        className={clsx("message-item", { "is-me": isMe })}
+        ref={ref}
+        data-date={msgDate.date}
+      >
         <Box className="inner">
           <Box className="icon-wrapper">
             <Avatar
@@ -93,7 +99,7 @@ const MessageItem = forwardRef(
                 {data.username},&nbsp;
               </Typography>
               <Typography component="span" variant="caption">
-                {getMsgDate(data.created)}
+                {msgDate.time}
               </Typography>
             </Box>
             <Box className="message-wrapper-inner">{data.message}</Box>

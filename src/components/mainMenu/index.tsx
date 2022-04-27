@@ -110,7 +110,7 @@ const MainMenu = () => {
           <Box className="header">
             <UserStatus userData={userData} />
           </Box>
-          <Box className="body min-scrollbar">
+          <Box className="body">
             {location.pathname.match("/group") && <GroupChatList />}
           </Box>
         </MenuBoard>

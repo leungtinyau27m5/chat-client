@@ -6,6 +6,7 @@ import {
   IconButton,
   styled,
   Typography,
+  Avatar,
 } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -28,7 +29,7 @@ import ScrollButton from "./ScrollButton";
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
   flex: 1,
-  padding: theme.spacing(2),
+  padding: `${theme.spacing(2)} 0`,
   display: "flex",
   [theme.breakpoints.down("lg")]: {
     padding: 0,
@@ -54,6 +55,25 @@ const StyledBox = styled(Box)(({ theme }) => ({
     "& > .body": {
       flex: 1,
       overflow: "auto",
+      "& .date-marks": {
+        fontSize: "0.8rem",
+        textAlign: "center",
+        width: "fit-content",
+        marginLeft: "auto",
+        marginRight: "auto",
+        padding: 8,
+      },
+      "& .current-date-mark": {
+        position: "absolute",
+        top: 64,
+        left: "50%",
+        transform: "translateX(-50%)",
+        fontSize: "0.8rem",
+        color: "whitesmoke",
+        backgroundColor: "rgba(30, 30, 30, 0.55)",
+        padding: 8,
+        borderRadius: 8,
+      },
     },
     "& > .trailing": {},
   },
@@ -139,7 +159,19 @@ const ChatRoom = () => {
               </IconButton>
             </Hidden>
             {chatData && (
-              <Typography variant="h6">{chatData.name.slice(0, 15)}</Typography>
+              <>
+                <Avatar
+                  src={chatData.profile_pic || ""}
+                  sx={{
+                    width: 34,
+                    height: 34,
+                    mr: 1.5,
+                  }}
+                />
+                <Typography variant="h6">
+                  {chatData.name.slice(0, 15)}
+                </Typography>
+              </>
             )}
           </Box>
           {chatData && (

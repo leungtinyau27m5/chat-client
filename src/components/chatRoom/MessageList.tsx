@@ -1,3 +1,12 @@
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  ReactNode,
+} from "react";
 import { useRecoilValue } from "recoil";
 import {
   messageListMetaSelectorByChatId,
@@ -5,9 +14,20 @@ import {
 } from "src/data/messageList.atom";
 import MessageItem from "./MessageItem";
 import { userSelector } from "src/data/user.atom";
-import { useEffect, useLayoutEffect, useRef } from "react";
 import { MySocket } from "src/shared/chatSocket.proto";
 import { getSession } from "src/utils/storages";
+import { Box, Typography } from "@mui/material";
+import { getMsgDate } from "src/helpers/chatHelper";
+
+const ItemContainer = (props: { date: string; children: ReactNode }) => {
+  const { date, children } = props;
+  return (
+    <>
+      <Box className="date-marks">{date}</Box>
+      {children}
+    </>
+  );
+};
 
 const MessageList = (props: MessageListProps) => {
   const { chatId, wss, bodyEl } = props;
@@ -15,20 +35,56 @@ const MessageList = (props: MessageListProps) => {
   const userData = useRecoilValue(userSelector);
   const listMetaData = useRecoilValue(messageListMetaSelectorByChatId(chatId));
   const itemRefs = useRef<HTMLDivElement[]>([]);
+  const [dateMark, setDateMark] = useState("");
+  const arrangedMessages = useMemo(() => {
+    const list = {} as { [key: string]: typeof messages };
+    messages.forEach((ele) => {
+      const date = getMsgDate(ele.created);
+      if (!(date.date in list)) {
+        list[date.date] = [];
+      }
+      list[date.date].push(ele);
+    });
+    return list;
+  }, [messages]);
+
+  const handleCallback: IntersectionObserverCallback = useCallback(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const { date } = (entry.target as HTMLElement).dataset;
+          setDateMark(date || "");
+        }
+      });
+    },
+    []
+  );
 
   useLayoutEffect(() => {
-    const items = itemRefs.current;
+    const items = [...itemRefs.current];
     return () => {
-      if (items[0] && bodyEl.scrollTop < 80) {
+      //TODO GET THE FIRST ELEMENT SCROLL TOP
+      const first = items.find((ele) => ele !== undefined);
+      if (first && bodyEl.scrollTop < 80) {
         bodyEl.scrollTo({
-          top: items[0].offsetTop - 80,
+          top: first.offsetTop - 80,
         });
       }
     };
-  }, [bodyEl, messages]);
+  }, [bodyEl, arrangedMessages]);
+
+  useLayoutEffect(() => {
+    const observer = new IntersectionObserver(handleCallback);
+    const items = itemRefs.current;
+    items.forEach((ele) => {
+      observer.observe(ele);
+    });
+    return () => {
+      observer.disconnect();
+    };
+  }, [handleCallback, arrangedMessages]);
 
   useEffect(() => {
-    console.log(listMetaData);
     if (listMetaData && listMetaData.page === 1) {
       bodyEl.scrollTo({
         top: bodyEl.scrollHeight,
@@ -39,14 +95,19 @@ const MessageList = (props: MessageListProps) => {
 
   return (
     <>
-      {messages.map((msg, index) => (
-        <MessageItem
-          key={msg.id}
-          data={msg}
-          isMe={userData?.id === msg.user_id}
-          ref={(el) => el && (itemRefs.current[index] = el)}
-        />
+      {Object.keys(arrangedMessages).map((key) => (
+        <ItemContainer key={key} date={key}>
+          {arrangedMessages[key].map((ele) => (
+            <MessageItem
+              key={ele.id}
+              data={ele}
+              isMe={userData?.id === ele.user_id}
+              ref={(el) => el && (itemRefs.current[ele.id] = el)}
+            />
+          ))}
+        </ItemContainer>
       ))}
+      <Box className="current-date-mark">{dateMark}</Box>
     </>
   );
 };

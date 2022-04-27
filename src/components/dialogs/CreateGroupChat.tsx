@@ -156,13 +156,23 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
       },
       members
     );
-    toggle(false)
+    toggle(false);
   };
 
   useEffect(() => {
     if (!controlledSwiper) return;
     controlledSwiper.slideTo(step);
   }, [step, controlledSwiper]);
+
+  useEffect(() => {
+    return () => {
+      reset({
+        members: [],
+        name: "",
+        bio: "",
+      });
+    };
+  }, [open, reset]);
 
   return (
     <Dialog
@@ -173,12 +183,15 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
         },
       }}
     >
-      <DialogTitle>
-        Create Group Chat
-        <IconButton onClick={() => toggle(false)}>
-          <CloseRoundedIcon />
-        </IconButton>
-      </DialogTitle>
+      <DialogTitle>Create Group Chat</DialogTitle>
+      <IconButton
+        onClick={() => toggle(false)}
+        className="btn-close"
+        color="error"
+        sx={{ position: "absolute", top: 8, right: 8 }}
+      >
+        <CloseRoundedIcon />
+      </IconButton>
       <DialogContent>
         <StyledForm
           component="form"
@@ -253,7 +266,14 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
                     )}
                   />
                 </Grid>
-                <Grid item xs={12} container justifyContent="flex-end">
+                <Grid item xs={12} container justifyContent="space-between">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => toggle(false)}
+                  >
+                    Cancel
+                  </Button>
                   <Button variant="contained" onClick={() => changeSteps(1)}>
                     Next
                   </Button>

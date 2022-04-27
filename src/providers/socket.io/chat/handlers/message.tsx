@@ -64,7 +64,6 @@ const MessageHandler = (props: MessageHandlerProps) => {
         }));
         setMessageListMeta((state) => {
           const newMetaData = { ...state };
-          console.log(unique)
           newMetaData[chatId] = {
             offset: meta.offset,
             total: meta.total,

@@ -38,7 +38,7 @@ const StyledMenuBoard = styled(Box)(({ theme }) => ({
     flex: 1,
     display: "flex",
     maxHeight: "calc(100vh - 258px)",
-    overflow: "auto",
+    // overflow: "auto",
     [theme.breakpoints.down("sm")]: {
       maxHeight: "calc(100vh - 225px)",
     }

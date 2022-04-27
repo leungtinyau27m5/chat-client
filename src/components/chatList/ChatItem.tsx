@@ -15,7 +15,7 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
   borderRadius: 12,
   padding: "0.35rem 0.5rem",
   "&.active": {
-    backgroundColor: "rgba(15, 15, 15, 0.1)",
+    backgroundColor: "rgba(15, 15, 15, 0.05)",
   },
   "&:not(:last-of-type)": {
     marginBottom: theme.spacing(0.25),
@@ -33,25 +33,29 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
     },
   },
   "& > .trailing": {
-    height: "100%",
+    position: "absolute",
+    top: 8,
+    right: 8,
+    lineHeight: 1,
+    width: "fit-content",
+    textAlign: "right",
+    "& >span": {
+      lineHeight: "inherit",
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "10ch",
+    },
   },
 }));
 
 const ChatItem = (props: ChatItemProps) => {
-  const { data, isActive } = props;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { data, isActive, handleOnClick } = props;
   const lastMessage = useRecoilValue(lastMessageSelector(data.id));
-
-  const handleOnClick = () => {
-    const updatedParams = new URLSearchParams(searchParams.toString());
-    updatedParams.set("id", data.id.toString());
-    setSearchParams(updatedParams);
-  };
 
   return (
     <StyledItem
       className={clsx("chat-item", { active: isActive })}
-      onClick={handleOnClick}
+      onClick={() => handleOnClick(data.id)}
     >
       <Box className="head">
         <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
@@ -81,11 +85,11 @@ const ChatItem = (props: ChatItemProps) => {
       <Box className="trailing">
         <Typography
           variant="caption"
-          sx={{ fontSize: "0.55rem", color: "lightgrey" }}
+          sx={{ fontSize: "0.55rem", color: "rgb(150, 150, 150)" }}
         >
-          {data.last_msg_time
+          {/* {data.last_msg_time
             ? getMsgDate(data.last_msg_time)
-            : getMsgDate(data.created)}
+            : getMsgDate(data.created)} */}
         </Typography>
       </Box>
     </StyledItem>
@@ -95,6 +99,7 @@ const ChatItem = (props: ChatItemProps) => {
 export interface ChatItemProps {
   data: Data.Chat;
   isActive: boolean;
+  handleOnClick: (id: number) => void;
 }
 
 export default ChatItem;
