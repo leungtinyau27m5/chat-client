@@ -31,8 +31,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
       paddingTop: theme.spacing(1.8),
       paddingBottom: theme.spacing(1.8),
     },
-    "& .header": {},
-    "& .body": {
+    "& > .header": {},
+    "& > .body": {
       flex: 1,
       width: "100%",
       display: "flex",
@@ -65,7 +65,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
         },
       },
     },
-    "& .trailing": {},
+    "& > .trailing": {},
   },
 }));
 
@@ -110,7 +110,7 @@ const MainMenu = () => {
           <Box className="header">
             <UserStatus userData={userData} />
           </Box>
-          <Box className="body">
+          <Box className="body min-scrollbar">
             {location.pathname.match("/group") && <GroupChatList />}
           </Box>
         </MenuBoard>

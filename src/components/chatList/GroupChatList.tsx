@@ -5,11 +5,13 @@ import { StyledTextField } from "../styled/MyTextField";
 import ChatItem from "./ChatItem";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import CreateGroupChat from "../dialogs/CreateGroupChat";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
+  width: "100%",
   "& .search": {
     width: "100%",
   },
@@ -21,18 +23,24 @@ const StyledBox = styled(Box)(({ theme }) => ({
     "& .btn-add": {
       minWidth: 0,
       padding: theme.spacing(0.5),
-      borderRadius: 8
+      borderRadius: 8,
     },
   },
 }));
 
 const GroupChatList = () => {
   const list = useRecoilValue(chatListSelectorByType("group"));
+  const [openCreateChat, setOpenCreateChat] = useState(false);
   const [keyword, setKeyword] = useState("");
   const filteredList = useMemo(() => {
     return list.filter((ele) => ele.name.match(keyword));
   }, [keyword, list]);
   const { id } = useParams();
+
+  const toggleCreateChat = (open?: boolean) => {
+    if (open === undefined) setOpenCreateChat((state) => !state);
+    else setOpenCreateChat(open);
+  };
 
   return (
     <StyledBox>
@@ -49,7 +57,7 @@ const GroupChatList = () => {
       />
       <Box className="list-head">
         <Typography variant="subtitle2">Group</Typography>
-        <Button className="btn-add">
+        <Button className="btn-add" onClick={() => toggleCreateChat(true)}>
           <AddRoundedIcon />
         </Button>
       </Box>
@@ -65,6 +73,7 @@ const GroupChatList = () => {
           </ListItem>
         )}
       </List>
+      <CreateGroupChat open={openCreateChat} toggle={toggleCreateChat} />
     </StyledBox>
   );
 };

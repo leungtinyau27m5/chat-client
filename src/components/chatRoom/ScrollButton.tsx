@@ -5,9 +5,10 @@ import { MySocket } from "src/shared/chatSocket.proto";
 import clsx from "clsx";
 
 const StyledButton = styled(Button)(() => ({
-  position: "fixed",
+  position: "absolute",
   bottom: 100,
-  right: 36,
+  right: 8,
+  transform: 'translateX(-50%)',
   borderRadius: "50%",
   width: 40,
   height: 40,

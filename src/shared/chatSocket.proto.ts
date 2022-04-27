@@ -44,6 +44,14 @@ export declare module SocketEvents {
         limit?: number;
       }
     ) => void;
+    "chat:create": (
+      data: Data.CreateGroupChat,
+      members: {
+        email?: string;
+        userId?: number;
+        role: Data.ParticipantRole;
+      }[]
+    ) => void;
   }
 }
 

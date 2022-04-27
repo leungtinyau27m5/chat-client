@@ -1,6 +1,12 @@
-import { filledInputClasses, styled, TextField } from "@mui/material";
+import {
+  filledInputClasses,
+  styled,
+  TextField,
+  Select,
+  formHelperTextClasses,
+} from "@mui/material";
 
-export const StyledTextField = styled(TextField)(() => ({
+export const StyledTextField = styled(TextField)(({ theme }) => ({
   [`& .${filledInputClasses.root}`]: {
     borderRadius: 12,
     [`&.${filledInputClasses.adornedStart}`]: {
@@ -18,4 +24,9 @@ export const StyledTextField = styled(TextField)(() => ({
       },
     },
   },
+  [`& .${formHelperTextClasses.root}`]: {
+    color: theme.palette.error.main,
+  },
 }));
+
+export const StyledSelect = styled(Select)(() => ({}));

@@ -5,16 +5,16 @@ import SettingsIcon from "@mui/icons-material/Settings";
 const StyledMenuBoard = styled(Box)(({ theme }) => ({
   position: "relative",
   paddingTop: theme.spacing(3.5),
-  paddingBottom: theme.spacing(3.5),
+  // paddingBottom: theme.spacing(3.5),
   borderLeft: "1px solid grey",
   borderTopLeftRadius: 20,
   borderBottomLeftRadius: 20,
-  borderCollapse: 'collapse',
-  display: 'flex',
-  flexDirection: 'column',
+  borderCollapse: "collapse",
+  display: "flex",
+  flexDirection: "column",
   [theme.breakpoints.down("sm")]: {
     paddingTop: theme.spacing(1.8),
-    paddingBottom: theme.spacing(1.8),
+    // paddingBottom: theme.spacing(1.8),
   },
   "& .setting": {
     position: "absolute",
@@ -26,7 +26,7 @@ const StyledMenuBoard = styled(Box)(({ theme }) => ({
       right: theme.spacing(1.8),
     },
   },
-  "& .header": {
+  "& > .header": {
     height: "fit-content",
     position: "relative",
     padding: theme.spacing(2),
@@ -34,10 +34,14 @@ const StyledMenuBoard = styled(Box)(({ theme }) => ({
       padding: theme.spacing(0.8),
     },
   },
-  "& .body": {
-    height: '100%',
+  "& > .body": {
     flex: 1,
-    overflowY: "auto",
+    display: "flex",
+    maxHeight: "calc(100vh - 258px)",
+    overflow: "auto",
+    [theme.breakpoints.down("sm")]: {
+      maxHeight: "calc(100vh - 225px)",
+    }
   },
 }));
 

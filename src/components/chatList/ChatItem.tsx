@@ -20,8 +20,8 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
   "&:not(:last-of-type)": {
     marginBottom: theme.spacing(0.25),
   },
-  "& .head": {},
-  "& .body": {
+  "& > .head": {},
+  "& > .body": {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-evenly",
@@ -32,7 +32,7 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
       whiteSpace: "nowrap",
     },
   },
-  "& .trailing": {
+  "& > .trailing": {
     height: "100%",
   },
 }));

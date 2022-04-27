@@ -1,6 +1,7 @@
 export declare namespace Data {
   type MessageMetaType = "video" | "image";
   type UserStatus = "available" | "busy" | "leave" | "hide" | "offline";
+  type ParticipantRole = "owner" | "admin" | "member" | "listener";
   interface Chat {
     id: number;
     name: string;
@@ -41,4 +42,5 @@ export declare namespace Data {
     status: UserStatus;
   }
   type SendMessage = Pick<Message, "message" | "media" | "meta">;
+  type CreateGroupChat = Pick<Chat, "name" | "profile_pic" | "type" | "bio">;
 }

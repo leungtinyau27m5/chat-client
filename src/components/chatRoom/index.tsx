@@ -42,7 +42,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     overflow: "hidden",
-    "& .head": {
+    position: "relative",
+    "& > .head": {
       height: 54,
       display: "flex",
       alignItems: "center",
@@ -50,12 +51,11 @@ const StyledBox = styled(Box)(({ theme }) => ({
       justifyContent: "space-between",
       boxShadow: "0px 2px 15px rgba(15, 15, 15, 0.05)",
     },
-    "& .body": {
+    "& > .body": {
       flex: 1,
       overflow: "auto",
-      position: "relative",
     },
-    "& .trailing": {},
+    "& > .trailing": {},
   },
 }));
 
@@ -153,21 +153,21 @@ const ChatRoom = () => {
             </Box>
           )}
         </Box>
-        <Box className="body" ref={bodyRef}>
+        <Box className="body min-scrollbar" ref={bodyRef}>
           {isLogin && bodyRef.current && (
             <MessageList chatId={id} wss={wss} bodyEl={bodyRef.current} />
-          )}
-          {isLogin && bodyRef.current && (
-            <ScrollButton
-              chatId={id}
-              wss={wss}
-              bodyEl={bodyRef.current}
-            ></ScrollButton>
           )}
         </Box>
         <Box className="trailing">
           <MessageField sendMessage={sendMessage} />
         </Box>
+        {isLogin && bodyRef.current && (
+          <ScrollButton
+            chatId={id}
+            wss={wss}
+            bodyEl={bodyRef.current}
+          ></ScrollButton>
+        )}
       </Box>
     </StyledBox>
   );
