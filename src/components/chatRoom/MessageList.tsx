@@ -34,7 +34,7 @@ const MessageList = (props: MessageListProps) => {
   const messages = useRecoilValue(messageListSelectorByChatId({ chatId }));
   const userData = useRecoilValue(userSelector);
   const listMetaData = useRecoilValue(messageListMetaSelectorByChatId(chatId));
-  const itemRefs = useRef<HTMLDivElement[]>([]);
+  const itemRefs = useRef<{ [key: number]: HTMLDivElement }>({});
   const [dateMark, setDateMark] = useState("");
   const arrangedMessages = useMemo(() => {
     const list = {} as { [key: string]: typeof messages };
@@ -61,10 +61,10 @@ const MessageList = (props: MessageListProps) => {
   );
 
   useLayoutEffect(() => {
-    const items = [...itemRefs.current];
+    const items = { ...itemRefs.current };
+    const firstKey = Number(Object.keys(items)[0]);
     return () => {
-      //TODO GET THE FIRST ELEMENT SCROLL TOP
-      const first = items.find((ele) => ele !== undefined);
+      const first = items[firstKey];
       if (first && bodyEl.scrollTop < 80) {
         bodyEl.scrollTo({
           top: first.offsetTop - 80,
@@ -76,7 +76,7 @@ const MessageList = (props: MessageListProps) => {
   useLayoutEffect(() => {
     const observer = new IntersectionObserver(handleCallback);
     const items = itemRefs.current;
-    items.forEach((ele) => {
+    Object.values(items).forEach((ele) => {
       observer.observe(ele);
     });
     return () => {
