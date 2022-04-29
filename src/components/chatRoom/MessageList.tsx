@@ -1,10 +1,8 @@
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   ReactNode,
 } from "react";
 import { useRecoilValue } from "recoil";
@@ -93,14 +91,15 @@ const MessageList = (props: MessageListProps) => {
     };
   }, [handleCallback, arrangedMessages]);
 
-  useEffect(() => {
-    if (listMetaData && listMetaData.page === 1) {
-      bodyEl.scrollTo({
-        top: bodyEl.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [bodyEl, chatId, listMetaData]);
+  // useEffect(() => {
+  //   if (listMetaData && listMetaData.page === 1) {
+  //     console.log("scroll height??");
+  //     bodyEl.scrollTo({
+  //       top: bodyEl.scrollHeight,
+  //       behavior: "smooth",
+  //     });
+  //   }
+  // }, [bodyEl, chatId, listMetaData]);
 
   return (
     <>

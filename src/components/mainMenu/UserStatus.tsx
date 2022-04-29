@@ -95,7 +95,7 @@ const UserStatus = (props: UserStatusProps) => {
             sx={{
               backgroundColor: alpha(statusColor.current, 1),
             }}
-          ></Box>
+          />
         </Box>
       </Box>
       <Typography variant="h5" align="center">

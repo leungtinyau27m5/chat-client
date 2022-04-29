@@ -25,6 +25,7 @@ import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import { messageListMetaSelectorByChatId } from "src/data/messageList.atom";
 import ScrollButton from "./ScrollButton";
+import { SocketEvents } from "src/shared/chatSocket.proto";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
@@ -89,6 +90,7 @@ const ChatRoom = () => {
   );
   const setShowMenu = useSetRecoilState(menuAtom);
   const { enqueueSnackbar } = useSnackbar();
+  const heightRef = useRef(roomScrollTop || 0);
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = (data: Data.SendMessage) => {
@@ -106,6 +108,24 @@ const ChatRoom = () => {
     },
     [id, wss]
   );
+
+  const handleMessageUpdate: SocketEvents.ListenEvents["message:update"] =
+    useCallback(
+      (data) => {
+        const body = bodyRef.current;
+        if (data.chatId !== id) return;
+        if (!body) return;
+        if (body.scrollHeight - 610 < body.scrollTop) {
+          setTimeout(() => {
+            body.scrollTo({
+              top: body.scrollHeight,
+              behavior: "smooth",
+            });
+          });
+        }
+      },
+      [id]
+    );
 
   useEffect(() => {
     if (!isLogin) return;
@@ -129,23 +149,46 @@ const ChatRoom = () => {
 
   useLayoutEffect(() => {
     const body = bodyRef.current;
-    const heightStr = roomScrollTop;
-    let height = 0;
-    const handleHeight = (evt: Event) => {
-      const target = evt.target as HTMLDivElement;
-      height = target.scrollTop;
+    if (!body) return;
+    return () => {
+      setRoomScrollTop(heightRef.current);
     };
-    body?.addEventListener("scroll", handleHeight);
-    if (heightStr) {
-      body?.scrollTo({
-        top: Number(heightStr),
+  }, [id, setRoomScrollTop]);
+
+  useLayoutEffect(() => {
+    if (roomScrollTop) {
+      bodyRef.current?.scrollTo({
+        top: roomScrollTop,
+        behavior: "smooth",
+      });
+    } else if (messageMeta?.page === 1) {
+      bodyRef.current?.scrollTo({
+        top: bodyRef.current.scrollHeight,
+        behavior: "smooth",
       });
     }
+  }, [roomScrollTop, messageMeta]);
+
+  useLayoutEffect(() => {
+    wss.on("message:update", handleMessageUpdate);
     return () => {
-      body?.removeEventListener("scroll", handleHeight);
-      setRoomScrollTop(height);
+      wss.off("message:update", handleMessageUpdate);
     };
-  }, [id, roomScrollTop, setRoomScrollTop]);
+  }, [wss, handleMessageUpdate]);
+
+  useLayoutEffect(() => {
+    const body = bodyRef.current;
+    if (!body) return;
+    const handleScrollPostion = (evt: Event) => {
+      const target = evt.target as HTMLDivElement;
+      const height = target.scrollTop;
+      heightRef.current = height;
+    };
+    body.addEventListener("scroll", handleScrollPostion);
+    return () => {
+      body.removeEventListener("scroll", handleScrollPostion);
+    };
+  }, []);
 
   return (
     <StyledBox className="chat-room">

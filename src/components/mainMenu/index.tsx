@@ -1,6 +1,21 @@
-import { Avatar, Box, ButtonBase, styled } from "@mui/material";
+import { useRef, useState } from "react";
+import {
+  Avatar,
+  Box,
+  ButtonBase,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  styled,
+  Tooltip,
+  paperClasses,
+  listItemTextClasses,
+  typographyClasses,
+} from "@mui/material";
 import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userSelector } from "src/data/user.atom";
 import { getProfilePic } from "src/api/chat";
 import clsx from "clsx";
@@ -10,6 +25,8 @@ import { useLocation } from "react-router-dom";
 import MenuBoard from "./MenuBoard";
 import UserStatus from "./UserStatus";
 import GroupChatList from "../chatList/GroupChatList";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: 380,
@@ -69,9 +86,31 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const StyledMenu = styled(Menu)(() => ({
+  [`& .${paperClasses.root}`]: {
+    borderRadius: 12,
+    [`& .${listItemTextClasses.root}`]: {
+      [`& .${typographyClasses.root}`]: {
+        fontSize: "0.85rem",
+      },
+    },
+  },
+}));
+
 const MainMenu = () => {
-  const userData = useRecoilValue(userSelector);
+  const [userData, setUserData] = useRecoilState(userSelector);
   const location = useLocation();
+  const [showMenu, setShowMenu] = useState(false);
+  const trailingRef = useRef<HTMLDivElement>(null);
+
+  const toggleMenu = () => setShowMenu((state) => !state);
+
+  const logout = () => {
+    setUserData(null);
+    setTimeout(() => {
+      window.location.reload();
+    });
+  };
 
   return (
     <StyledBox component="aside" className="main-menu">
@@ -99,9 +138,19 @@ const MainMenu = () => {
             </Box>
           ))}
         </Box>
-        <Box className="trailing">
-          {userData && userData.profile_pic && (
-            <Avatar src={getProfilePic(userData.profile_pic)} />
+        <Box className="trailing" ref={trailingRef}>
+          {userData && (
+            <Tooltip title={userData.username}>
+              <ButtonBase sx={{ borderRadius: "50%" }} onClick={toggleMenu}>
+                <Avatar
+                  src={
+                    userData.profile_pic
+                      ? getProfilePic(userData.profile_pic)
+                      : ""
+                  }
+                />
+              </ButtonBase>
+            </Tooltip>
           )}
         </Box>
       </Box>
@@ -115,6 +164,43 @@ const MainMenu = () => {
           </Box>
         </MenuBoard>
       )}
+      <StyledMenu
+        open={showMenu}
+        anchorEl={trailingRef.current}
+        onClose={() => toggleMenu()}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: 80,
+          horizontal: -12,
+        }}
+      >
+        <MenuItem>
+          <ListItemIcon>
+            <AccountCircleRoundedIcon />
+          </ListItemIcon>
+          <ListItemText primary="My Profile" />
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={logout}>
+          <ListItemIcon
+            sx={{
+              color: (theme) => theme.palette.error.main,
+            }}
+          >
+            <LogoutRoundedIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Logout"
+            color="error"
+            sx={{
+              color: (theme) => theme.palette.error.main,
+            }}
+          />
+        </MenuItem>
+      </StyledMenu>
     </StyledBox>
   );
 };

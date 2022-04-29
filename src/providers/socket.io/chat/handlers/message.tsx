@@ -31,7 +31,7 @@ const MessageHandler = (props: MessageHandlerProps) => {
           if (count[message.chat_id] && message.sender_id !== userData?.id) {
             count[message.chat_id] += 1;
           } else {
-            count[message.chat_id] = 0;
+            count[message.chat_id] = 1;
           }
         });
         setMessageList((state) => {
@@ -47,6 +47,7 @@ const MessageHandler = (props: MessageHandlerProps) => {
             if (newData[nKey]) newData[nKey] += count[nKey];
             else newData[nKey] = count[nKey];
           });
+          console.log("set unread: ", newData);
           return newData;
         });
       },

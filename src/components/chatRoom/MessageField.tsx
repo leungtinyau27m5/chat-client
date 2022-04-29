@@ -4,7 +4,8 @@ import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import { Data } from "src/shared/data.proto";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1.2),
@@ -57,19 +58,26 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 const MessageField = (props: MessageFieldProps) => {
   const { sendMessage } = props;
-  const [message, setMessage] = useState("");
+  const { control, handleSubmit, reset } = useForm<MessageFieldFormState>();
 
-  const handleSend = () => {
+  const handleSend: SubmitHandler<MessageFieldFormState> = (evt) => {
     sendMessage({
-      message,
+      message: evt.message,
       media: null,
       meta: {},
+    });
+    reset({
+      message: "",
     });
   };
 
   return (
     <StyledBox>
-      <Box className="inner">
+      <Box
+        className="inner"
+        component="form"
+        onSubmit={handleSubmit(handleSend)}
+      >
         <Box className="action-container">
           <Button variant="text">
             <InsertEmoticonRoundedIcon />
@@ -78,22 +86,30 @@ const MessageField = (props: MessageFieldProps) => {
             <AttachFileRoundedIcon />
           </Button>
         </Box>
-        <StyledTextField
-          variant="filled"
-          className="message-input"
-          placeholder="Your Message Here"
-          value={message}
-          onChange={(evt) => setMessage(evt.target.value)}
-          type="text"
-          multiline
-          maxRows={5}
-          minRows={1}
-          InputProps={{
-            disableUnderline: true,
-          }}
+        <Controller
+          control={control}
+          name="message"
+          defaultValue=""
+          render={({ field }) => (
+            <StyledTextField
+              variant="filled"
+              className="message-input"
+              placeholder="Your Message Here"
+              // value={message}
+              // onChange={(evt) => setMessage(evt.target.value)}
+              type="text"
+              multiline
+              maxRows={5}
+              minRows={1}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              {...field}
+            />
+          )}
         />
         <Box className="action-container">
-          <Button color="primary" variant="contained" onClick={handleSend}>
+          <Button color="primary" variant="contained" type="submit">
             <SendRoundedIcon />
           </Button>
         </Box>
@@ -101,6 +117,10 @@ const MessageField = (props: MessageFieldProps) => {
     </StyledBox>
   );
 };
+
+export interface MessageFieldFormState {
+  message: string;
+}
 
 export interface MessageFieldProps {
   sendMessage: (data: Data.SendMessage) => void;

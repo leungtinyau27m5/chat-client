@@ -41,7 +41,7 @@ const StyledMenuBoard = styled(Box)(({ theme }) => ({
     // overflow: "auto",
     [theme.breakpoints.down("sm")]: {
       maxHeight: "calc(100vh - 225px)",
-    }
+    },
   },
 }));
 
@@ -49,11 +49,11 @@ const MenuBoard = (props: MenuBoardProps) => {
   const { children } = props;
   return (
     <StyledMenuBoard className="menu-board">
-      <Box className="setting">
+      {/* <Box className="setting">
         <IconButton>
           <SettingsIcon />
         </IconButton>
-      </Box>
+      </Box> */}
       {children}
     </StyledMenuBoard>
   );

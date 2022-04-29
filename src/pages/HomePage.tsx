@@ -13,7 +13,7 @@ import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
 
 const StyledBox = styled(Box)(() => ({
-  maxWidth: 1400,
+  maxWidth: 1200,
   display: "flex",
   marginLeft: "auto",
   marginRight: "auto",
