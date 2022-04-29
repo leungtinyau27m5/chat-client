@@ -10,13 +10,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.Fragment>
+  <React.StrictMode>
     <BrowserRouter>
       <RecoilRoot>
         <App />
       </RecoilRoot>
     </BrowserRouter>
-  </React.Fragment>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,11 +1,9 @@
 import { Avatar, Box, ListItemButton, styled, Typography } from "@mui/material";
 import clsx from "clsx";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { getProfilePic } from "src/api/chat";
 import { chatUnreadSelectorById } from "src/data/chatList.atom";
-import { lastMessageSelector } from "src/data/messageList.atom";
 import { userSelector } from "src/data/user.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
@@ -46,9 +44,18 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
       lineHeight: "inherit",
     },
     "& .unread-count": {
-      fontSize: "0.8rem",
       padding: 4,
       backgroundColor: theme.palette.primary.main,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: "whitesmoke",
+      borderRadius: "50%",
+      width: 18,
+      height: 18,
+      fontSize: "0.5rem",
+      marginTop: "10%",
+      marginLeft: "auto",
     },
     [theme.breakpoints.down("sm")]: {
       width: "10ch",
@@ -100,7 +107,9 @@ const ChatItem = (props: ChatItemProps) => {
             ? `${msgTime.date} ${msgTime.time}`
             : msgTime.date}
         </Typography>
-        {/* {unread !== 0 && <Box className="unread-count">{unread}</Box>} */}
+        {unread.length !== 0 && (
+          <Box className="unread-count">{unread.length}</Box>
+        )}
       </Box>
     </StyledItem>
   );

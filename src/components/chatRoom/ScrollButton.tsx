@@ -42,7 +42,7 @@ const ScrollButton = (props: ScrollButtonProps) => {
   const { chatId, bodyEl } = props;
   const unread = useRecoilValue(chatUnreadSelectorById(chatId));
   const [scrollHeightFit, setScrollHeightFit] = useState(false);
-  console.count("scroll button");
+
   const scrollToButtom = () => {
     bodyEl.scrollTo({
       top: bodyEl.scrollHeight,
