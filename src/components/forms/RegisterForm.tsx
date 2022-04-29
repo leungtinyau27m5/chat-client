@@ -94,7 +94,7 @@ const RegisterForm = (props: RegisterFormProps) => {
         username: evt.username,
         profilePic: avatar === "" ? null : avatar,
       });
-      const { code, message } = res.data;
+      const { message } = res.data;
       enqueueSnackbar(message, {
         variant: "success",
       });

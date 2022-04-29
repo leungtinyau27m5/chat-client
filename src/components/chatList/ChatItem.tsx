@@ -100,7 +100,7 @@ const ChatItem = (props: ChatItemProps) => {
             ? `${msgTime.date} ${msgTime.time}`
             : msgTime.date}
         </Typography>
-        {unread !== 0 && <Box className="unread-count">{unread}</Box>}
+        {/* {unread !== 0 && <Box className="unread-count">{unread}</Box>} */}
       </Box>
     </StyledItem>
   );

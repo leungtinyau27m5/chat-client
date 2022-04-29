@@ -6,7 +6,7 @@ import { MySocket, SocketEvents } from "src/shared/chatSocket.proto";
 const ChatHandler = (props: ChatHandlerProps) => {
   const { wss } = props;
   const setChatList = useSetRecoilState(chatListAtom);
-  const handleOnChatCreate = () => {};
+
   const handleMessageUpdate: SocketEvents.ListenEvents["message:update"] =
     useCallback(
       (data) => {

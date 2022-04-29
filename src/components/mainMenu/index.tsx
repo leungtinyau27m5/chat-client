@@ -15,7 +15,7 @@ import {
   typographyClasses,
 } from "@mui/material";
 import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { userSelector } from "src/data/user.atom";
 import { getProfilePic } from "src/api/chat";
 import clsx from "clsx";

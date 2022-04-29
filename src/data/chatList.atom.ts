@@ -6,7 +6,7 @@ export const chatListAtom = atom<{ [key: number]: Data.Chat }>({
   default: {},
 });
 
-export const chatUnreadAtom = atom<{ [key: number]: number }>({
+export const chatUnreadAtom = atom<{ [key: number]: number[] }>({
   key: "chatUnReadAtom",
   default: {},
 });
@@ -16,14 +16,29 @@ export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
   default: {},
 });
 
-export const chatUnreadSelectorById = selectorFamily<number, number>({
+export const chatUnreadSelectorById = selectorFamily<number[], number>({
   key: "chatUnreadSelectorById",
   get:
     (chatId) =>
     ({ get }) => {
       const data = get(chatUnreadAtom);
       if (data[chatId]) return data[chatId];
-      return 0;
+      return [];
+    },
+  set:
+    (chatId) =>
+    ({ get, set }, newValue) => {
+      if (newValue instanceof DefaultValue) {
+        set(chatUnreadAtom, (state) => ({
+          ...state,
+          [chatId]: [],
+        }));
+        return;
+      }
+      set(chatUnreadAtom, (state) => ({
+        ...state,
+        [chatId]: newValue,
+      }));
     },
 });
 

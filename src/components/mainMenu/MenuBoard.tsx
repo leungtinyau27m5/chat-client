@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { Box, styled, IconButton } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { Box, styled } from "@mui/material";
 
 const StyledMenuBoard = styled(Box)(({ theme }) => ({
   position: "relative",

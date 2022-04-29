@@ -1,8 +1,7 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import {
   Badge,
   Box,
-  Button,
   ButtonBase,
   buttonBaseClasses,
   styled,
@@ -40,10 +39,10 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const ScrollButton = (props: ScrollButtonProps) => {
-  const { chatId, wss, bodyEl } = props;
+  const { chatId, bodyEl } = props;
   const unread = useRecoilValue(chatUnreadSelectorById(chatId));
-  const [active, setActive] = useState(true);
-
+  const [scrollHeightFit, setScrollHeightFit] = useState(false);
+  console.count("scroll button");
   const scrollToButtom = () => {
     bodyEl.scrollTo({
       top: bodyEl.scrollHeight,
@@ -51,21 +50,22 @@ const ScrollButton = (props: ScrollButtonProps) => {
     });
   };
 
-  // useLayoutEffect(() => {
-  //   const handleScroll = () => {
-  //     setActive(bodyEl.scrollHeight - bodyEl.scrollTop > 1500 || unread !== 0);
-  //   };
-  //   setActive(unread !== 0);
-  //   bodyEl.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     bodyEl.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [bodyEl, unread]);
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      setScrollHeightFit(bodyEl.scrollHeight - 610 * 2 >= bodyEl.scrollTop);
+    };
+    bodyEl.addEventListener("scroll", handleScroll);
+    return () => {
+      bodyEl.removeEventListener("scroll", handleScroll);
+    };
+  }, [bodyEl]);
 
   return (
-    <StyledBox className={clsx("scroll-button-container", { active })}>
+    <StyledBox
+      className={clsx("scroll-button-container", { active: scrollHeightFit })}
+    >
       <Badge
-        badgeContent={unread}
+        badgeContent={unread.length}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",

@@ -1,15 +1,9 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import {
-  MySocket,
-  SocketCodeMap,
-  SocketEvents,
-} from "src/shared/chatSocket.proto";
+import { MySocket, SocketEvents } from "src/shared/chatSocket.proto";
 import { ChatSocketContext } from "./context";
 import { io } from "socket.io-client";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userSelector } from "src/data/user.atom";
-import { getCookie } from "src/utils/storages";
-import { useNavigate } from "react-router-dom";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { Button } from "@mui/material";
 import { chatListAtom } from "src/data/chatList.atom";
@@ -28,7 +22,6 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const [connected, setConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const userData = useRecoilValue(userSelector);
-  const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const setChatList = useSetRecoilState(chatListAtom);
 

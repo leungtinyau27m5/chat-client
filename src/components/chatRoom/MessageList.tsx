@@ -5,16 +5,14 @@ import {
   useRef,
   ReactNode,
 } from "react";
-import { useRecoilValue } from "recoil";
-import {
-  messageListMetaSelectorByChatId,
-  messageListSelectorByChatId,
-} from "src/data/messageList.atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { messageListSelectorByChatId } from "src/data/messageList.atom";
 import MessageItem from "./MessageItem";
 import { userSelector } from "src/data/user.atom";
 import { MySocket } from "src/shared/chatSocket.proto";
 import { Box } from "@mui/material";
 import { getMsgDate } from "src/helpers/chatHelper";
+import { chatUnreadSelectorById } from "src/data/chatList.atom";
 
 const ItemContainer = (props: { date: string; children: ReactNode }) => {
   const { date, children } = props;
@@ -27,12 +25,13 @@ const ItemContainer = (props: { date: string; children: ReactNode }) => {
 };
 
 const MessageList = (props: MessageListProps) => {
-  const { chatId, wss, bodyEl } = props;
+  const { chatId, bodyEl } = props;
   const messages = useRecoilValue(messageListSelectorByChatId({ chatId }));
   const userData = useRecoilValue(userSelector);
-  const listMetaData = useRecoilValue(messageListMetaSelectorByChatId(chatId));
+  const [unreadIds, setUnreadIds] = useRecoilState(
+    chatUnreadSelectorById(chatId)
+  );
   const itemRefs = useRef<{ [key: number]: HTMLDivElement }>({});
-  // const [dateMark, setDateMark] = useState("");
   const dateMark = useRef<HTMLDivElement>(null);
   const arrangedMessages = useMemo(() => {
     const list = {} as { [key: string]: typeof messages };
@@ -50,16 +49,26 @@ const MessageList = (props: MessageListProps) => {
     (entries, observer) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const { date } = (entry.target as HTMLElement).dataset;
+          const { date, id } = (entry.target as HTMLElement).dataset;
           const target = dateMark.current;
           if (target && date) {
             target.innerText = date;
             target.style.padding = "8px";
           }
+          if (id) {
+            const idx = unreadIds.findIndex((ele) => ele === Number(id));
+            if (idx === -1) return;
+            setUnreadIds((state) => {
+              const newArr = [...state];
+              newArr.splice(idx, 1);
+              console.log(newArr);
+              return newArr;
+            });
+          }
         }
       });
     },
-    []
+    [unreadIds, setUnreadIds]
   );
 
   useLayoutEffect(() => {
@@ -90,16 +99,6 @@ const MessageList = (props: MessageListProps) => {
       }
     };
   }, [handleCallback, arrangedMessages]);
-
-  // useEffect(() => {
-  //   if (listMetaData && listMetaData.page === 1) {
-  //     console.log("scroll height??");
-  //     bodyEl.scrollTo({
-  //       top: bodyEl.scrollHeight,
-  //       behavior: "smooth",
-  //     });
-  //   }
-  // }, [bodyEl, chatId, listMetaData]);
 
   return (
     <>

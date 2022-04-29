@@ -17,7 +17,6 @@ import {
 import { menuAtom } from "src/data/menu.atom";
 import MessageField from "./MessageField";
 import { useChatSocketCtx } from "src/providers/socket.io/chat/context";
-import { useSnackbar } from "notistack";
 import { Data } from "src/shared/data.proto";
 import MessageList from "./MessageList";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
@@ -26,6 +25,7 @@ import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import { messageListMetaSelectorByChatId } from "src/data/messageList.atom";
 import ScrollButton from "./ScrollButton";
 import { SocketEvents } from "src/shared/chatSocket.proto";
+import { userSelector } from "src/data/user.atom";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
@@ -83,13 +83,13 @@ const ChatRoom = () => {
   const [searchParams] = useSearchParams();
   const id = Number(searchParams.get("id"));
   const { wss, isLogin } = useChatSocketCtx();
+  const userData = useRecoilValue(userSelector);
   const chatData = useRecoilValue(chatListSelectorById(id));
   const messageMeta = useRecoilValue(messageListMetaSelectorByChatId(id));
   const [roomScrollTop, setRoomScrollTop] = useRecoilState(
     chatRoomScrollTopSelectorById(id)
   );
   const setShowMenu = useSetRecoilState(menuAtom);
-  const { enqueueSnackbar } = useSnackbar();
   const heightRef = useRef(roomScrollTop || 0);
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -115,7 +115,10 @@ const ChatRoom = () => {
         const body = bodyRef.current;
         if (data.chatId !== id) return;
         if (!body) return;
-        if (body.scrollHeight - 610 < body.scrollTop) {
+        if (
+          body.scrollHeight - 610 < body.scrollTop ||
+          data.list[0].sender_id === userData?.id
+        ) {
           setTimeout(() => {
             body.scrollTo({
               top: body.scrollHeight,
@@ -124,7 +127,7 @@ const ChatRoom = () => {
           });
         }
       },
-      [id]
+      [id, userData?.id]
     );
 
   useEffect(() => {

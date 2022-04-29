@@ -1,7 +1,7 @@
 import { Box, styled } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { userSelector } from "src/data/user.atom";
 import { Controller } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -25,7 +25,7 @@ const StyledPage = styled(Box)(() => ({
     width: "100vw",
     "& .swiper-slide": {
       width: "100vw",
-      height: 'fit-content',
+      height: "fit-content",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -35,7 +35,7 @@ const StyledPage = styled(Box)(() => ({
 
 const LoginPage = () => {
   const [searchParam, setSearchParam] = useSearchParams();
-  const [userData, setUserData] = useRecoilState(userSelector);
+  const userData = useRecoilValue(userSelector);
   const [controlledSwiper, setControlledSwiper] = useState<SwiperType | null>(
     null
   );

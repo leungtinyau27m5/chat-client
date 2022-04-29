@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   MySocket,
@@ -9,7 +9,6 @@ import {
   messageListAtom,
   messageListMetaAtom,
 } from "src/data/messageList.atom";
-import { Data } from "src/shared/data.proto";
 import { chatUnreadAtom } from "src/data/chatList.atom";
 import { userSelector } from "src/data/user.atom";
 
@@ -25,13 +24,13 @@ const MessageHandler = (props: MessageHandlerProps) => {
       (data) => {
         const { chatId, list } = data;
         const target = messageList[chatId] ? [...messageList[chatId]] : [];
-        let count = {} as { [key: number]: number };
+        let count = {} as { [key: number]: number[] };
         list.forEach((message) => {
           target.push(message);
           if (count[message.chat_id] && message.sender_id !== userData?.id) {
-            count[message.chat_id] += 1;
-          } else {
-            count[message.chat_id] = 1;
+            count[message.chat_id].push(message.id);
+          } else if (!count[message.chat_id]) {
+            count[message.chat_id] = [message.id];
           }
         });
         setMessageList((state) => {
@@ -44,10 +43,10 @@ const MessageHandler = (props: MessageHandlerProps) => {
           const newData = { ...state };
           Object.keys(count).forEach((key) => {
             const nKey = Number(key);
-            if (newData[nKey]) newData[nKey] += count[nKey];
+            if (newData[nKey])
+              newData[nKey] = [...newData[nKey], ...count[nKey]];
             else newData[nKey] = count[nKey];
           });
-          console.log("set unread: ", newData);
           return newData;
         });
       },
