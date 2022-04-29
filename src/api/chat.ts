@@ -23,8 +23,11 @@ export const postLogin: AxiosAction<
   return chatAxios.post("/user/login", data, config);
 };
 
-export const postRegister = () => {
-  return chatAxios.post("/user/register");
+export const postRegister: AxiosAction<
+  ChatAxios.Register.Param,
+  ChatAxios.Register.Response
+> = (data, config = {}) => {
+  return chatAxios.post("/user/register", data, config);
 };
 
 export const getByToken = (token: string, config?: AxiosRequestConfig) => {

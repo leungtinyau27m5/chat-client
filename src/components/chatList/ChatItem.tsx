@@ -1,9 +1,12 @@
 import { Avatar, Box, ListItemButton, styled, Typography } from "@mui/material";
 import clsx from "clsx";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { getProfilePic } from "src/api/chat";
+import { chatUnreadSelectorById } from "src/data/chatList.atom";
 import { lastMessageSelector } from "src/data/messageList.atom";
+import { userSelector } from "src/data/user.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
 
@@ -39,8 +42,13 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
     lineHeight: 1,
     width: "fit-content",
     textAlign: "right",
-    "& >span": {
+    "& span": {
       lineHeight: "inherit",
+    },
+    "& .unread-count": {
+      fontSize: "0.8rem",
+      padding: 4,
+      backgroundColor: theme.palette.primary.main,
     },
     [theme.breakpoints.down("sm")]: {
       width: "10ch",
@@ -50,7 +58,12 @@ const StyledItem = styled(ListItemButton)(({ theme }) => ({
 
 const ChatItem = (props: ChatItemProps) => {
   const { data, isActive, handleOnClick } = props;
-  const lastMessage = useRecoilValue(lastMessageSelector(data.id));
+  const userData = useRecoilValue(userSelector);
+  const unread = useRecoilValue(chatUnreadSelectorById(data.id));
+  const msgTime = useMemo(() => {
+    if (data.last_msg_time) return getMsgDate(data.last_msg_time);
+    else return getMsgDate(data.created);
+  }, [data.last_msg_time, data.created]);
 
   return (
     <StyledItem
@@ -61,36 +74,33 @@ const ChatItem = (props: ChatItemProps) => {
         <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
       </Box>
       <Box className="body">
-        <Typography variant="subtitle1" fontWeight="bold" className="trim-text">
+        <Typography variant="subtitle1" className="trim-text">
           {data.name}
         </Typography>
-        {lastMessage ? (
-          <Typography variant="caption" className="trim-text">
-            {lastMessage.message
-              ? lastMessage.message
-              : lastMessage.media && lastMessage.meta
-              ? "Media"
-              : `No Message Yet`}
-          </Typography>
-        ) : (
-          <Typography variant="caption" className="trim-text">
-            {data.message
-              ? data.message
-              : data.media && data.media
-              ? "Media"
-              : "No Message Yet"}
-          </Typography>
-        )}
+        <Typography variant="caption" className="trim-text">
+          {data
+            ? `${userData?.id === data.user_id ? "" : `${data.username}: `}${
+                data.message
+                  ? data.message
+                  : data.media && data.meta
+                  ? "Media"
+                  : "No Message Yet"
+              }`
+            : ""}
+        </Typography>
       </Box>
       <Box className="trailing">
         <Typography
           variant="caption"
           sx={{ fontSize: "0.55rem", color: "rgb(150, 150, 150)" }}
         >
-          {/* {data.last_msg_time
-            ? getMsgDate(data.last_msg_time)
-            : getMsgDate(data.created)} */}
+          {msgTime.date === "Today"
+            ? msgTime.time
+            : msgTime.date === "Yesterday"
+            ? `${msgTime.date} ${msgTime.time}`
+            : msgTime.date}
         </Typography>
+        {unread !== 0 && <Box className="unread-count">{unread}</Box>}
       </Box>
     </StyledItem>
   );

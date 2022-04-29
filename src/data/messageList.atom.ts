@@ -68,12 +68,13 @@ export const messageListSelectorByChatId = selectorFamily<
     },
 });
 
-export const lastMessageSelector = selectorFamily<Data.Message, number>({
+export const lastMessageSelector = selectorFamily<Data.Message | null, number>({
   key: "lastMessageSelector",
   get:
     (chatId) =>
     ({ get }) => {
       const list = get(messageListSelectorByChatId({ chatId }));
-      return list[list.length - 1];
+      if (list.length) return list[list.length - 1];
+      return null;
     },
 });

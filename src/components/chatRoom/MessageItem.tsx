@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { formatDate } from "src/helpers/common";
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  padding: "1rem",
+  padding: "0.5rem",
   width: "100%",
   "& .inner": {
     display: "flex",

@@ -6,13 +6,9 @@ export const chatListAtom = atom<{ [key: number]: Data.Chat }>({
   default: {},
 });
 
-export const chatMetaAtom = atom({
-  key: "chatMetaAtom",
-  default: {
-    offset: -1,
-    limit: -1,
-    total: -1,
-  },
+export const chatUnreadAtom = atom<{ [key: number]: number }>({
+  key: "chatUnReadAtom",
+  default: {},
 });
 
 export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
@@ -20,7 +16,21 @@ export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
   default: {},
 });
 
-export const chatRoomScrollTopSelectorById = selectorFamily<number | null, number>({
+export const chatUnreadSelectorById = selectorFamily<number, number>({
+  key: "chatUnreadSelectorById",
+  get:
+    (chatId) =>
+    ({ get }) => {
+      const data = get(chatUnreadAtom);
+      if (data[chatId]) return data[chatId];
+      return 0;
+    },
+});
+
+export const chatRoomScrollTopSelectorById = selectorFamily<
+  number | null,
+  number
+>({
   key: "chatRoomMetaSelectorById",
   get:
     (id) =>
@@ -57,7 +67,9 @@ export const chatListSelectorByType = selectorFamily<
       const raw = get(chatListAtom);
       const list = Object.keys(raw).reduce((arr, key) => {
         const nKey = Number(key);
-        if (raw[nKey].type === type) arr.push(raw[nKey]);
+        if (raw[nKey].type === type) {
+          arr.push(raw[nKey]);
+        }
         return arr;
       }, [] as Data.Chat[]);
       return list;

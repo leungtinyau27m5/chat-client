@@ -22,4 +22,16 @@ export declare namespace ChatAxios {
       token?: string;
     }
   }
+  namespace Register {
+    interface Param {
+      email: string;
+      username: string;
+      password: string;
+      profilePic: null | string;
+    }
+    interface Response {
+      code: ExpressCodeMap;
+      message: string;
+    }
+  }
 }

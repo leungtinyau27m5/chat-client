@@ -20,6 +20,13 @@ import VisibilityIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOffRounded";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import FileUploader from "./FileUploader";
+import { postRegister } from "src/api/chat";
+import { getEmailRegex, getPasswordRegex } from "src/helpers/common";
+import { helperText } from "src/helpers/validator";
+import axios from "axios";
+import { ChatAxios } from "src/api/chat.proto";
+import { useSnackbar } from "notistack";
+import { ExpressCodeMap } from "src/api/express.proto";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: "70vw",
@@ -67,6 +74,7 @@ const RegisterForm = (props: RegisterFormProps) => {
   const { handleSubmit, control } = useForm<RegisterFormState>();
   const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   const togglePassword = () => setShowPassword((state) => !state);
 
@@ -78,7 +86,46 @@ const RegisterForm = (props: RegisterFormProps) => {
     setAvatar("");
   };
 
-  const submitRegisterForm: SubmitHandler<RegisterFormState> = (evt) => {};
+  const submitRegisterForm: SubmitHandler<RegisterFormState> = async (evt) => {
+    try {
+      const res = await postRegister({
+        email: evt.email,
+        password: evt.password,
+        username: evt.username,
+        profilePic: avatar === "" ? null : avatar,
+      });
+      const { code, message } = res.data;
+      enqueueSnackbar(message, {
+        variant: "success",
+      });
+      switchForm("login");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const { code, message } = error.response
+          ?.data as ChatAxios.Register.Response;
+        if (message === "ER_DUP_ENTRY") {
+          return enqueueSnackbar("Duplicated email", {
+            variant: "warning",
+          });
+        } else if (code === ExpressCodeMap.invalidParameter) {
+          return enqueueSnackbar("Parameter is invalid", {
+            variant: "warning",
+          });
+        }
+        enqueueSnackbar(error.response?.statusText, {
+          variant: "error",
+        });
+      } else if (error instanceof Error) {
+        enqueueSnackbar(error.message, {
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar("unknwon error", {
+          variant: "error",
+        });
+      }
+    }
+  };
 
   return (
     <StyledBox
@@ -124,8 +171,10 @@ const RegisterForm = (props: RegisterFormProps) => {
             defaultValue=""
             rules={{
               required: true,
+              minLength: 3,
+              maxLength: 25,
             }}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <StyledTextField
                 variant="filled"
                 placeholder="Username"
@@ -133,6 +182,8 @@ const RegisterForm = (props: RegisterFormProps) => {
                   disableUnderline: true,
                   startAdornment: <AccountBoxRoundedIcon />,
                 }}
+                error={error !== undefined}
+                helperText={error ? "Should be 3-25 characters" : ""}
                 {...field}
               />
             )}
@@ -145,8 +196,9 @@ const RegisterForm = (props: RegisterFormProps) => {
             defaultValue=""
             rules={{
               required: true,
+              pattern: getEmailRegex(),
             }}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <StyledTextField
                 variant="filled"
                 placeholder="Email"
@@ -154,6 +206,8 @@ const RegisterForm = (props: RegisterFormProps) => {
                   disableUnderline: true,
                   startAdornment: <EmailRoundedIcon />,
                 }}
+                error={error !== undefined}
+                helperText={error ? helperText.email[error.type] : ""}
                 {...field}
               />
             )}
@@ -166,8 +220,9 @@ const RegisterForm = (props: RegisterFormProps) => {
             defaultValue=""
             rules={{
               required: true,
+              pattern: getPasswordRegex(),
             }}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <StyledTextField
                 variant="filled"
                 placeholder="Password"
@@ -185,6 +240,8 @@ const RegisterForm = (props: RegisterFormProps) => {
                     </IconButton>
                   ),
                 }}
+                error={error !== undefined}
+                helperText={error ? helperText.password[error.type] : ""}
                 {...field}
               />
             )}
@@ -204,7 +261,7 @@ const RegisterForm = (props: RegisterFormProps) => {
             Reset
           </Button>
           <Button variant="contained" type="submit" sx={{ ml: 1 }}>
-            Login
+            Submit
           </Button>
         </Box>
       </Box>

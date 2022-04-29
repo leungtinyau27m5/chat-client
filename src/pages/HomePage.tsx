@@ -12,6 +12,13 @@ import { userSelector } from "src/data/user.atom";
 import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
 
+const StyledBox = styled(Box)(() => ({
+  maxWidth: 1400,
+  display: "flex",
+  marginLeft: "auto",
+  marginRight: "auto",
+}));
+
 const HomePage = () => {
   const [userData, setUserData] = useRecoilState(userSelector);
   const { enqueueSnackbar } = useSnackbar();
@@ -57,16 +64,17 @@ const HomePage = () => {
 
   return (
     <ChatSocketProvider>
-      <Hidden mdDown>
-        <MainMenu />
-      </Hidden>
-      <Hidden mdUp>
-        <Drawer anchor="left" open={showMenu} onClose={() => toggleMenu()}>
+      <StyledBox className="page-container">
+        <Hidden mdDown>
           <MainMenu />
-        </Drawer>
-      </Hidden>
-
-      <Outlet />
+        </Hidden>
+        <Hidden mdUp>
+          <Drawer anchor="left" open={showMenu} onClose={() => toggleMenu()}>
+            <MainMenu />
+          </Drawer>
+        </Hidden>
+        <Outlet />
+      </StyledBox>
     </ChatSocketProvider>
   );
 };

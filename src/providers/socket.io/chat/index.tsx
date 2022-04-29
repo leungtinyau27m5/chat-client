@@ -12,9 +12,10 @@ import { getCookie } from "src/utils/storages";
 import { useNavigate } from "react-router-dom";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { Button } from "@mui/material";
-import { chatListAtom, chatMetaAtom } from "src/data/chatList.atom";
+import { chatListAtom } from "src/data/chatList.atom";
 import { Data } from "src/shared/data.proto";
 import MessageHandler from "./handlers/message";
+import ChatHandler from "./handlers/chat";
 
 const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const { current: wss } = useRef<MySocket>(
@@ -30,7 +31,6 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const setChatList = useSetRecoilState(chatListAtom);
-  const setChatMeta = useSetRecoilState(chatMetaAtom);
 
   const emitLogin = useCallback(() => {
     if (!userData) return;
@@ -120,6 +120,7 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
     >
       {props.children}
       {wss && <MessageHandler wss={wss} />}
+      {wss && <ChatHandler wss={wss} />}
     </ChatSocketContext.Provider>
   );
 };

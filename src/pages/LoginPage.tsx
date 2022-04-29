@@ -25,6 +25,7 @@ const StyledPage = styled(Box)(() => ({
     width: "100vw",
     "& .swiper-slide": {
       width: "100vw",
+      height: 'fit-content',
       display: "flex",
       alignItems: "center",
       justifyContent: "center",

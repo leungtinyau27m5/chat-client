@@ -5,13 +5,15 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 const StyledBox = styled(Box)(() => ({
   position: "relative",
   padding: "0.75rem 1.2rem",
-  width: '100%',
+  width: "100%",
   "& .file-upload-input": {
     display: "none",
   },
   "& .file-upload-label": {
     cursor: "pointer",
-    width: '100%',
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
   },
   "& .button-remove": {
     position: "absolute",

@@ -48,7 +48,13 @@ const GroupChatList = () => {
   const [openCreateChat, setOpenCreateChat] = useState(false);
   const [keyword, setKeyword] = useState("");
   const filteredList = useMemo(() => {
-    return list.filter((ele) => ele.name.match(keyword));
+    return list
+      .filter((ele) => ele.name.match(keyword))
+      .sort(
+        (a, b) =>
+          new Date(b.last_msg_time || b.created).getTime() -
+          new Date(a.last_msg_time || a.created).getTime()
+      );
   }, [keyword, list]);
   const containerRef = useRef<HTMLDivElement>(null);
   const chatId = useMemo(() => {

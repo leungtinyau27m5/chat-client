@@ -15,8 +15,7 @@ import {
 import MessageItem from "./MessageItem";
 import { userSelector } from "src/data/user.atom";
 import { MySocket } from "src/shared/chatSocket.proto";
-import { getSession } from "src/utils/storages";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { getMsgDate } from "src/helpers/chatHelper";
 
 const ItemContainer = (props: { date: string; children: ReactNode }) => {
@@ -55,7 +54,10 @@ const MessageList = (props: MessageListProps) => {
         if (entry.isIntersecting) {
           const { date } = (entry.target as HTMLElement).dataset;
           const target = dateMark.current;
-          if (target && date) target.innerText = date;
+          if (target && date) {
+            target.innerText = date;
+            target.style.padding = "8px";
+          }
         }
       });
     },
@@ -78,11 +80,16 @@ const MessageList = (props: MessageListProps) => {
   useLayoutEffect(() => {
     const observer = new IntersectionObserver(handleCallback);
     const items = itemRefs.current;
+    const target = dateMark.current;
     Object.values(items).forEach((ele) => {
       observer.observe(ele);
     });
     return () => {
       observer.disconnect();
+      if (target) {
+        target.style.padding = "0px";
+        target.innerText = "";
+      }
     };
   }, [handleCallback, arrangedMessages]);
 

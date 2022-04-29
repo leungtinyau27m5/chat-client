@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   MySocket,
   SocketCodeMap,
@@ -10,11 +10,15 @@ import {
   messageListMetaAtom,
 } from "src/data/messageList.atom";
 import { Data } from "src/shared/data.proto";
+import { chatUnreadAtom } from "src/data/chatList.atom";
+import { userSelector } from "src/data/user.atom";
 
 const MessageHandler = (props: MessageHandlerProps) => {
   const { wss } = props;
   const [messageList, setMessageList] = useRecoilState(messageListAtom);
+  const userData = useRecoilValue(userSelector);
   const setMessageListMeta = useSetRecoilState(messageListMetaAtom);
+  const setChatUnread = useSetRecoilState(chatUnreadAtom);
 
   const handleMessageUpdate: SocketEvents.ListenEvents["message:update"] =
     useCallback(
@@ -24,7 +28,7 @@ const MessageHandler = (props: MessageHandlerProps) => {
         let count = {} as { [key: number]: number };
         list.forEach((message) => {
           target.push(message);
-          if (count[message.chat_id]) {
+          if (count[message.chat_id] && message.sender_id !== userData?.id) {
             count[message.chat_id] += 1;
           } else {
             count[message.chat_id] = 0;
@@ -36,8 +40,17 @@ const MessageHandler = (props: MessageHandlerProps) => {
             [chatId]: target,
           };
         });
+        setChatUnread((state) => {
+          const newData = { ...state };
+          Object.keys(count).forEach((key) => {
+            const nKey = Number(key);
+            if (newData[nKey]) newData[nKey] += count[nKey];
+            else newData[nKey] = count[nKey];
+          });
+          return newData;
+        });
       },
-      [messageList, setMessageList]
+      [messageList, setChatUnread, setMessageList, userData?.id]
     );
 
   const handleMessageList: SocketEvents.ListenEvents["message:list"] =

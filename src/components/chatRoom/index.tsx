@@ -71,7 +71,6 @@ const StyledBox = styled(Box)(({ theme }) => ({
         fontSize: "0.8rem",
         color: "whitesmoke",
         backgroundColor: "rgba(30, 30, 30, 0.55)",
-        padding: 8,
         borderRadius: 8,
       },
     },
