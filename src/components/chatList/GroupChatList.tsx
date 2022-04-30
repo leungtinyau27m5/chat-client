@@ -49,7 +49,9 @@ const GroupChatList = () => {
   const [keyword, setKeyword] = useState("");
   const filteredList = useMemo(() => {
     return list
-      .filter((ele) => ele.name.match(keyword))
+      .filter((ele) =>
+        ele.name.toLocaleLowerCase().match(keyword.toLowerCase())
+      )
       .sort(
         (a, b) =>
           new Date(b.last_msg_time || b.created).getTime() -

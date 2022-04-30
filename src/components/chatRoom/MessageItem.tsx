@@ -24,8 +24,9 @@ const StyledBox = styled(Box)(({ theme }) => ({
       "& .message-wrapper-inner": {
         position: "relative",
         backgroundColor: "white",
-        padding: 12,
-        borderRadius: 15,
+        padding: "6px 15px",
+        borderRadius: 5,
+        fontSize: 14,
         overflowWrap: "break-word",
         whiteSpace: "pre-wrap",
         width: "fit-content",
@@ -35,6 +36,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
         },
         [theme.breakpoints.down("md")]: {
           maxWidth: "calc(100vw * 0.7)",
+          fontSize: 13
         },
         "&::before": {
           content: "''",

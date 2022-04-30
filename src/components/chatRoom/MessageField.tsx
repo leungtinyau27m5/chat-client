@@ -1,15 +1,19 @@
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import { Box, Button, filledInputClasses, styled } from "@mui/material";
 import { StyledTextField } from "../styled/MyTextField";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import { Data } from "src/shared/data.proto";
-import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import Picker, { IEmojiData } from "emoji-picker-react";
+import clsx from "clsx";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1.2),
   display: "flex",
+  flexDirection: "column",
+  rowGap: 8,
   [theme.breakpoints.down("md")]: {
     padding: 0,
   },
@@ -54,11 +58,24 @@ const StyledBox = styled(Box)(({ theme }) => ({
       },
     },
   },
+  "& .emoji-picker-container": {
+    display: "none",
+    "&.active": {
+      display: "flex",
+    },
+    "& .emoji-picker-react": {
+      width: "100%",
+      flex: 1,
+    },
+  },
 }));
 
 const MessageField = (props: MessageFieldProps) => {
   const { sendMessage } = props;
-  const { control, handleSubmit, reset } = useForm<MessageFieldFormState>();
+  const { control, handleSubmit, reset, setValue, getValues, setFocus } =
+    useForm<MessageFieldFormState>();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const messageInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend: SubmitHandler<MessageFieldFormState> = (evt) => {
     sendMessage({
@@ -71,6 +88,16 @@ const MessageField = (props: MessageFieldProps) => {
     });
   };
 
+  const toggleEmojiPicker = () => setShowEmojiPicker((state) => !state);
+
+  const onEmojiClick = (
+    evt: MouseEvent<Element, globalThis.MouseEvent>,
+    data: IEmojiData
+  ) => {
+    setValue("message", getValues("message") + data.emoji);
+    setFocus("message");
+  };
+
   return (
     <StyledBox>
       <Box
@@ -79,7 +106,7 @@ const MessageField = (props: MessageFieldProps) => {
         onSubmit={handleSubmit(handleSend)}
       >
         <Box className="action-container">
-          <Button variant="text">
+          <Button variant="text" onClick={toggleEmojiPicker}>
             <InsertEmoticonRoundedIcon />
           </Button>
           <Button variant="text">
@@ -90,13 +117,11 @@ const MessageField = (props: MessageFieldProps) => {
           control={control}
           name="message"
           defaultValue=""
-          render={({ field }) => (
+          render={({ field: { ref, ...field } }) => (
             <StyledTextField
               variant="filled"
               className="message-input"
               placeholder="Your Message Here"
-              // value={message}
-              // onChange={(evt) => setMessage(evt.target.value)}
               type="text"
               multiline
               maxRows={5}
@@ -104,6 +129,7 @@ const MessageField = (props: MessageFieldProps) => {
               InputProps={{
                 disableUnderline: true,
               }}
+              inputRef={ref}
               {...field}
             />
           )}
@@ -113,6 +139,11 @@ const MessageField = (props: MessageFieldProps) => {
             <SendRoundedIcon />
           </Button>
         </Box>
+      </Box>
+      <Box
+        className={clsx("emoji-picker-container", { active: showEmojiPicker })}
+      >
+        <Picker onEmojiClick={onEmojiClick} native disableAutoFocus />
       </Box>
     </StyledBox>
   );

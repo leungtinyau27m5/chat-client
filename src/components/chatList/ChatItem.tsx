@@ -81,12 +81,12 @@ const ChatItem = (props: ChatItemProps) => {
         <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
       </Box>
       <Box className="body">
-        <Typography variant="subtitle1" className="trim-text">
+        <Typography variant="subtitle1" className="trim-text" fontWeight={400}>
           {data.name}
         </Typography>
         <Typography variant="caption" className="trim-text">
           {data
-            ? `${userData?.id === data.user_id ? "" : `${data.username}: `}${
+            ? `${userData?.id === data.user_id ? "you: " : `${data.username}: `}${
                 data.message
                   ? data.message
                   : data.media && data.meta
