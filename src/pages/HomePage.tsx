@@ -65,14 +65,14 @@ const HomePage = () => {
   return (
     <ChatSocketProvider>
       <StyledBox className="page-container">
-        <Hidden mdDown>
+        {/* <Hidden mdDown>
           <MainMenu />
         </Hidden>
         <Hidden mdUp>
           <Drawer anchor="left" open={showMenu} onClose={() => toggleMenu()}>
             <MainMenu />
           </Drawer>
-        </Hidden>
+        </Hidden> */}
         <Outlet />
       </StyledBox>
     </ChatSocketProvider>

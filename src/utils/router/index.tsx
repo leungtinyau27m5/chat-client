@@ -31,6 +31,7 @@ const myRoutes: RouteObject[] = [
         element: <PrivatePage />,
         children: [
           {
+            index: true,
             element: <ChatRoom />,
           },
         ],

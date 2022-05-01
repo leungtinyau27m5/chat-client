@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import {
   Avatar,
   Box,
@@ -14,7 +14,6 @@ import {
   listItemTextClasses,
   typographyClasses,
 } from "@mui/material";
-import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
 import { useRecoilState } from "recoil";
 import { userSelector } from "src/data/user.atom";
 import { getProfilePic } from "src/api/chat";
@@ -22,9 +21,7 @@ import clsx from "clsx";
 import { menuItems } from "./constants";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import MenuBoard from "./MenuBoard";
-import UserStatus from "./UserStatus";
-import GroupChatList from "../chatList/GroupChatList";
+import AcUnitRoundedIcon from "@mui/icons-material/AcUnitRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
@@ -97,7 +94,8 @@ const StyledMenu = styled(Menu)(() => ({
   },
 }));
 
-const MainMenu = () => {
+const MainMenu = (props: MainMenuProps) => {
+  const { children } = props;
   const [userData, setUserData] = useRecoilState(userSelector);
   const location = useLocation();
   const [showMenu, setShowMenu] = useState(false);
@@ -154,16 +152,6 @@ const MainMenu = () => {
           )}
         </Box>
       </Box>
-      {userData && (
-        <MenuBoard>
-          <Box className="header">
-            <UserStatus userData={userData} />
-          </Box>
-          <Box className="body">
-            {location.pathname.match("/group") && <GroupChatList />}
-          </Box>
-        </MenuBoard>
-      )}
       <StyledMenu
         open={showMenu}
         anchorEl={trailingRef.current}
@@ -201,8 +189,13 @@ const MainMenu = () => {
           />
         </MenuItem>
       </StyledMenu>
+      {children}
     </StyledBox>
   );
 };
+
+export interface MainMenuProps {
+  children?: ReactNode;
+}
 
 export default MainMenu;

@@ -5,6 +5,7 @@ import { Data } from "./data.proto";
 export declare module SocketEvents {
   interface ListenEvents {
     "user:login": (code: SocketCodeMap, res: Error | UserState.Atom) => void;
+    "user:status": (code: SocketCodeMap, res?: Error | Data.UserStatus) => void;
     "chat:list": (
       code: SocketCodeMap,
       res?:
@@ -36,6 +37,7 @@ export declare module SocketEvents {
   }
   interface EmitEvents {
     "user:login": (token: string) => void;
+    "user:status": (status: Data.UserStatus) => void;
     "message:send": (chatId: number, data: Data.SendMessage) => void;
     "message:list": (
       chatId: number,

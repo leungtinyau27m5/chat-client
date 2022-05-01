@@ -1,5 +1,6 @@
-import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
+import AssistantRoundedIcon from '@mui/icons-material/AssistantRounded';
 
 export const menuItems = [
   {
@@ -8,6 +9,10 @@ export const menuItems = [
   },
   {
     path: "/private",
+    icon: <AssistantRoundedIcon />,
+  },
+  {
+    path: "/friends",
     icon: <PeopleRoundedIcon />,
   },
 ];

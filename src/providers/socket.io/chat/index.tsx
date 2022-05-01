@@ -10,6 +10,7 @@ import { chatListAtom } from "src/data/chatList.atom";
 import { Data } from "src/shared/data.proto";
 import MessageHandler from "./handlers/message";
 import ChatHandler from "./handlers/chat";
+import UserHandler from "./handlers/user";
 
 const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const { current: wss } = useRef<MySocket>(
@@ -76,7 +77,6 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
         return;
       }
       setIsLogin(true);
-      console.log(res);
     };
     wss.on("connect", handleConnect);
     wss.on("disconnect", handleDisconnect);
@@ -114,6 +114,7 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
       {props.children}
       {wss && <MessageHandler wss={wss} />}
       {wss && <ChatHandler wss={wss} />}
+      {wss && <UserHandler wss={wss} />}
     </ChatSocketContext.Provider>
   );
 };

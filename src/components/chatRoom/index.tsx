@@ -236,7 +236,7 @@ const ChatRoom = () => {
           )}
         </Box>
         <Box className="trailing">
-          <MessageField sendMessage={sendMessage} />
+          <MessageField sendMessage={sendMessage} chatId={id} />
         </Box>
         {isLogin && bodyRef.current && (
           <ScrollButton

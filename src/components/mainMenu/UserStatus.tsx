@@ -13,9 +13,11 @@ import {
   ListItemText,
   SelectChangeEvent,
 } from "@mui/material";
-import { useRef, useState } from "react";
+import { useMemo } from "react";
 import { getProfilePic } from "src/api/chat";
 import { UserState } from "src/data/user.atom";
+import { useChatSocketCtx } from "src/providers/socket.io/chat/context";
+import { Data } from "src/shared/data.proto";
 import { onlineStatus } from "./constants";
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -72,15 +74,17 @@ const StyledSelect = styled(Select)(() => ({
 
 const UserStatus = (props: UserStatusProps) => {
   const { userData } = props;
-  const [status, setStatus] = useState(onlineStatus[0].value);
-  const statusColor = useRef(onlineStatus[0].color);
+  const { wss } = useChatSocketCtx();
+  const statusColor = useMemo(() => {
+    return (
+      onlineStatus.find((ele) => ele.value === userData.status)?.color ||
+      onlineStatus[0].color
+    );
+  }, [userData.status]);
 
   const handleStatusOnChange = (evt: SelectChangeEvent<unknown>) => {
-    const value = evt.target.value as string;
-    statusColor.current =
-      onlineStatus.find((ele) => ele.value === value)?.color ||
-      onlineStatus[0].color;
-    setStatus(value);
+    const value = evt.target.value as Data.UserStatus;
+    wss.emit("user:status", value);
   };
 
   return (
@@ -93,7 +97,7 @@ const UserStatus = (props: UserStatusProps) => {
           <Box
             component="span"
             sx={{
-              backgroundColor: alpha(statusColor.current, 1),
+              backgroundColor: alpha(statusColor, 1),
             }}
           />
         </Box>
@@ -106,14 +110,14 @@ const UserStatus = (props: UserStatusProps) => {
           label="Status"
           variant="filled"
           disableUnderline
-          value={status}
+          value={userData.status}
           onChange={handleStatusOnChange}
           renderValue={(value) => <span>{value as string}</span>}
           sx={{
-            backgroundColor: alpha(statusColor.current, 0.15),
-            color: statusColor.current,
+            backgroundColor: alpha(statusColor, 0.15),
+            color: statusColor,
             "&:hover, &.Mui-focused": {
-              backgroundColor: alpha(statusColor.current, 0.15),
+              backgroundColor: alpha(statusColor, 0.15),
             },
           }}
         >

@@ -48,11 +48,6 @@ const MenuBoard = (props: MenuBoardProps) => {
   const { children } = props;
   return (
     <StyledMenuBoard className="menu-board">
-      {/* <Box className="setting">
-        <IconButton>
-          <SettingsIcon />
-        </IconButton>
-      </Box> */}
       {children}
     </StyledMenuBoard>
   );

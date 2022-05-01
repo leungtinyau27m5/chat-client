@@ -1,14 +1,11 @@
+import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Data } from "src/shared/data.proto";
 import { Box, List, styled, Typography, ListItem, Button } from "@mui/material";
-import { useRecoilValue } from "recoil";
-import { chatListSelectorByType } from "src/data/chatList.atom";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { StyledTextField } from "../styled/MyTextField";
 import ChatItem from "./ChatItem";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import CreateGroupChat from "../dialogs/CreateGroupChat";
-import { ChatSocketContext } from "src/providers/socket.io/chat/context";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -42,10 +39,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const GroupChatList = () => {
-  const list = useRecoilValue(chatListSelectorByType("group"));
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [openCreateChat, setOpenCreateChat] = useState(false);
+const ChatList = (props: ChatListProps) => {
+  const { list, children, head, itemOnClick, chatId } = props;
   const [keyword, setKeyword] = useState("");
   const filteredList = useMemo(() => {
     return list
@@ -59,20 +54,6 @@ const GroupChatList = () => {
       );
   }, [keyword, list]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const chatId = useMemo(() => {
-    return searchParams.get("id") || undefined;
-  }, [searchParams]);
-
-  const toggleCreateChat = (open?: boolean) => {
-    if (open === undefined) setOpenCreateChat((state) => !state);
-    else setOpenCreateChat(open);
-  };
-
-  const handleOnClick = (id: number) => {
-    const updatedParams = new URLSearchParams(searchParams.toString());
-    updatedParams.set("id", id.toString());
-    setSearchParams(updatedParams);
-  };
 
   useLayoutEffect(() => {
     if (!containerRef.current) return;
@@ -112,10 +93,7 @@ const GroupChatList = () => {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="subtitle2">Group</Typography>
-          <Button className="btn-add" onClick={() => toggleCreateChat(true)}>
-            <AddRoundedIcon />
-          </Button>
+          {head}
         </Box>
       </Box>
       <List sx={{ p: 1 }}>
@@ -124,7 +102,7 @@ const GroupChatList = () => {
             key={ele.id}
             data={ele}
             isActive={Number(chatId) === ele.id}
-            handleOnClick={handleOnClick}
+            handleOnClick={itemOnClick}
           />
         ))}
         {filteredList.length === 0 && (
@@ -135,15 +113,17 @@ const GroupChatList = () => {
           </ListItem>
         )}
       </List>
-      <ChatSocketContext.Consumer>
-        {({ isLogin }) =>
-          isLogin && (
-            <CreateGroupChat open={openCreateChat} toggle={toggleCreateChat} />
-          )
-        }
-      </ChatSocketContext.Consumer>
+      {children}
     </StyledBox>
   );
 };
 
-export default GroupChatList;
+export interface ChatListProps {
+  chatId: string | null;
+  list: Data.Chat[];
+  head: ReactNode;
+  itemOnClick: (chatId: number) => void;
+  children?: ReactNode;
+}
+
+export default ChatList;

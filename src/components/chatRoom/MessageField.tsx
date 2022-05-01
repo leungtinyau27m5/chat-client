@@ -71,7 +71,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const MessageField = (props: MessageFieldProps) => {
-  const { sendMessage } = props;
+  const { sendMessage, chatId } = props;
   const { control, handleSubmit, reset, setValue, getValues, setFocus } =
     useForm<MessageFieldFormState>();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -97,6 +97,12 @@ const MessageField = (props: MessageFieldProps) => {
     setValue("message", getValues("message") + data.emoji);
     setFocus("message");
   };
+
+  useEffect(() => {
+    return () => {
+      reset({ message: "" });
+    };
+  }, [chatId, reset]);
 
   return (
     <StyledBox>
@@ -154,6 +160,7 @@ export interface MessageFieldFormState {
 }
 
 export interface MessageFieldProps {
+  chatId: number;
   sendMessage: (data: Data.SendMessage) => void;
 }
 
