@@ -34,8 +34,8 @@ export const onlineStatus = [
     color: "#F44336",
   },
   {
-    value: "hide",
-    text: "hide",
+    value: "offline",
+    text: "offline",
     color: "#8A8C97",
   },
 ];

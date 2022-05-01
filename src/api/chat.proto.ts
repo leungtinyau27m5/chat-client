@@ -13,6 +13,7 @@ export declare namespace ChatAxios {
         id: number;
         email: string;
         username: string;
+        hash: string;
         status: "available" | "busy" | "leave" | "hide" | "offline";
         profile_pic: null | string;
         bio: null | string;

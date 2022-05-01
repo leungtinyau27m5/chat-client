@@ -1,9 +1,7 @@
 import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Data } from "src/shared/data.proto";
-import { Box, List, styled, Typography, ListItem, Button } from "@mui/material";
+import { Box, List, styled, Typography, ListItem } from "@mui/material";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { StyledTextField } from "../styled/MyTextField";
 import ChatItem from "./ChatItem";
 

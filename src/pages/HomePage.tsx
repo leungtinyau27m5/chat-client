@@ -47,6 +47,8 @@ const HomePage = () => {
           enqueueSnackbar(message, {
             variant: "error",
           });
+          setUserData(null);
+          navigate("/login");
         }
         console.log(error);
       }

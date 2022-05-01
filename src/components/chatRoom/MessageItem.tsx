@@ -23,6 +23,8 @@ import { getProfilePic } from "src/api/chat";
 import clsx from "clsx";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import MessageActionMenu from "./MessageActionMenu";
+import { Link } from "react-router-dom";
+import AvatarAndZoom from "../dialogs/AvatarAndZoom";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: "0.5rem",
@@ -149,7 +151,8 @@ const MessageItem = memo(
       >
         <Box className="inner">
           <Box className="icon-wrapper">
-            <Avatar
+            <AvatarAndZoom
+              title={data.username}
               src={data.profile_pic ? getProfilePic(data.profile_pic) : ""}
               sx={{
                 width: 30,
@@ -159,9 +162,17 @@ const MessageItem = memo(
           </Box>
           <Box className="message-wrapper-outer">
             <Box className="message-meta">
-              <Typography component="span" variant="caption">
-                {data.username},&nbsp;
-              </Typography>
+              {!isMe && (
+                <Link to={`/private?id=${data.sender_id}`}>
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="blueviolet"
+                  >
+                    {data.username},&nbsp;
+                  </Typography>
+                </Link>
+              )}
               <Typography component="span" variant="caption">
                 {msgDate.time}
               </Typography>

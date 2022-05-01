@@ -161,6 +161,7 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
 
   useEffect(() => {
     if (!controlledSwiper) return;
+    if (controlledSwiper.destroyed) return;
     controlledSwiper.slideTo(step);
   }, [step, controlledSwiper]);
 
