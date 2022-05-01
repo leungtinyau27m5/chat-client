@@ -16,6 +16,20 @@ export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
   default: {},
 });
 
+export const chatHashToIdSelector = selectorFamily<number, string | null>({
+  key: "chatHashToIdSelector",
+  get:
+    (hash) =>
+    ({ get }) => {
+      if (hash === null) return -1;
+      const data = get(chatListAtom);
+      for (const key in data) {
+        if (data[key].hash === hash) return Number(key);
+      }
+      return -1;
+    },
+});
+
 export const chatUnreadSelectorById = selectorFamily<number[], number>({
   key: "chatUnreadSelectorById",
   get:

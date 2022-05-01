@@ -76,7 +76,7 @@ const ChatItem = (props: ChatItemProps) => {
   return (
     <StyledItem
       className={clsx("chat-item", { active: isActive })}
-      onClick={() => handleOnClick(data.id)}
+      onClick={() => handleOnClick(data.hash)}
     >
       <Box className="head">
         <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
@@ -130,7 +130,7 @@ const ChatItem = (props: ChatItemProps) => {
 export interface ChatItemProps {
   data: Data.Chat;
   isActive: boolean;
-  handleOnClick: (id: number) => void;
+  handleOnClick: (hash: string) => void;
 }
 
 export default ChatItem;

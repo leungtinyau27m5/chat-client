@@ -6,6 +6,7 @@ export declare namespace Data {
     id: number;
     name: string;
     type: "group" | "private";
+    hash: string;
     profile_pic: string | null;
     bio: string | null;
     created: string;

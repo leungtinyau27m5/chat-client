@@ -11,10 +11,11 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  chatHashToIdSelector,
   chatListSelectorById,
   chatRoomScrollTopSelectorById,
 } from "src/data/chatList.atom";
-import { menuAtom } from "src/data/menu.atom";
+import { appbarAtom, menuAtom } from "src/data/menu.atom";
 import MessageField from "./MessageField";
 import { useChatSocketCtx } from "src/providers/socket.io/chat/context";
 import { Data } from "src/shared/data.proto";
@@ -31,12 +32,13 @@ const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
   flex: 1,
   padding: `${theme.spacing(2)} 0`,
-  display: "flex",
   [theme.breakpoints.down("lg")]: {
     padding: 0,
   },
   [theme.breakpoints.down("md")]: {},
   "& .room-inner": {
+    width: "100%",
+    background: "transparent",
     flex: 1,
     height: "100%",
     backgroundColor: "#EDF0F6",
@@ -101,11 +103,13 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 const ChatRoom = () => {
   const [searchParams] = useSearchParams();
-  const id = Number(searchParams.get("id"));
+  const hash = searchParams.get("hash");
+  const id = useRecoilValue(chatHashToIdSelector(hash));
   const { wss, isLogin } = useChatSocketCtx();
   const userData = useRecoilValue(userSelector);
   const chatData = useRecoilValue(chatListSelectorById(id));
   const messageMeta = useRecoilValue(messageListMetaSelectorByChatId(id));
+  const setAppbar = useSetRecoilState(appbarAtom);
   const [roomScrollTop, setRoomScrollTop] = useRecoilState(
     chatRoomScrollTopSelectorById(id)
   );
@@ -213,60 +217,70 @@ const ChatRoom = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!chatData) return;
+    setAppbar(false);
+    return () => {
+      setAppbar(true);
+    };
+  }, [setAppbar, chatData]);
+
   return (
-    <StyledBox className="chat-room">
-      <Box className="room-inner">
-        <Box className="head">
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Hidden mdUp>
-              <IconButton onClick={() => setShowMenu(true)} sx={{ mr: 1 }}>
-                <MenuOpenRoundedIcon />
-              </IconButton>
-            </Hidden>
+    chatData && (
+      <StyledBox className="chat-room">
+        <Box className="room-inner">
+          <Box className="head">
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Hidden mdUp>
+                <IconButton onClick={() => setShowMenu(true)} sx={{ mr: 1 }}>
+                  <MenuOpenRoundedIcon />
+                </IconButton>
+              </Hidden>
+              {chatData && (
+                <>
+                  <Avatar
+                    src={chatData.profile_pic || ""}
+                    sx={{
+                      width: 34,
+                      height: 34,
+                      mr: 1.5,
+                    }}
+                  />
+                  <Typography variant="h6">
+                    {chatData.name.slice(0, 15)}
+                  </Typography>
+                </>
+              )}
+            </Box>
             {chatData && (
-              <>
-                <Avatar
-                  src={chatData.profile_pic || ""}
-                  sx={{
-                    width: 34,
-                    height: 34,
-                    mr: 1.5,
-                  }}
-                />
-                <Typography variant="h6">
-                  {chatData.name.slice(0, 15)}
-                </Typography>
-              </>
+              <Box>
+                <Button color="secondary">
+                  <PeopleAltRoundedIcon />
+                </Button>
+                <Button color="secondary">
+                  <CategoryRoundedIcon />
+                </Button>
+              </Box>
             )}
           </Box>
-          {chatData && (
-            <Box>
-              <Button color="secondary">
-                <PeopleAltRoundedIcon />
-              </Button>
-              <Button color="secondary">
-                <CategoryRoundedIcon />
-              </Button>
-            </Box>
-          )}
-        </Box>
-        <Box className="body min-scrollbar" ref={bodyRef}>
+          <Box className="body min-scrollbar" ref={bodyRef}>
+            {isLogin && bodyRef.current && (
+              <MessageList chatId={id} wss={wss} bodyEl={bodyRef.current} />
+            )}
+          </Box>
+          <Box className="trailing">
+            <MessageField sendMessage={sendMessage} chatId={id} />
+          </Box>
           {isLogin && bodyRef.current && (
-            <MessageList chatId={id} wss={wss} bodyEl={bodyRef.current} />
+            <ScrollButton
+              chatId={id}
+              wss={wss}
+              bodyEl={bodyRef.current}
+            ></ScrollButton>
           )}
         </Box>
-        <Box className="trailing">
-          <MessageField sendMessage={sendMessage} chatId={id} />
-        </Box>
-        {isLogin && bodyRef.current && (
-          <ScrollButton
-            chatId={id}
-            wss={wss}
-            bodyEl={bodyRef.current}
-          ></ScrollButton>
-        )}
-      </Box>
-    </StyledBox>
+      </StyledBox>
+    )
   );
 };
 

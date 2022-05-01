@@ -1,16 +1,23 @@
-import { Box, Drawer, Hidden, styled } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Hidden,
+  IconButton,
+  styled,
+  Toolbar,
+} from "@mui/material";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { getByToken } from "src/api/chat";
 import { ExpressCodeMap } from "src/api/express.proto";
-import MainMenu from "src/components/mainMenu";
-import { menuAtom } from "src/data/menu.atom";
+import { appbarAtom, menuAtom } from "src/data/menu.atom";
 import { userSelector } from "src/data/user.atom";
 import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
+import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 
 const StyledBox = styled(Box)(() => ({
   maxWidth: 1200,
@@ -22,7 +29,8 @@ const StyledBox = styled(Box)(() => ({
 const HomePage = () => {
   const [userData, setUserData] = useRecoilState(userSelector);
   const { enqueueSnackbar } = useSnackbar();
-  const [showMenu, setShowMenu] = useRecoilState(menuAtom);
+  const setShowMenu = useSetRecoilState(menuAtom);
+  const showAppbar = useRecoilValue(appbarAtom);
   const navigate = useNavigate();
   const token = getCookie("jwt");
 
@@ -50,7 +58,6 @@ const HomePage = () => {
           setUserData(null);
           navigate("/login");
         }
-        console.log(error);
       }
     },
     [enqueueSnackbar, navigate, setUserData]
@@ -67,14 +74,24 @@ const HomePage = () => {
   return (
     <ChatSocketProvider>
       <StyledBox className="page-container">
-        {/* <Hidden mdDown>
-          <MainMenu />
-        </Hidden>
         <Hidden mdUp>
-          <Drawer anchor="left" open={showMenu} onClose={() => toggleMenu()}>
-            <MainMenu />
-          </Drawer>
-        </Hidden> */}
+          <AppBar
+            position="fixed"
+            sx={{
+              top: showAppbar ? 0 : "-100%",
+            }}
+          >
+            <Toolbar>
+              <IconButton
+                edge="start"
+                sx={{ color: "white" }}
+                onClick={toggleMenu}
+              >
+                <MenuOpenRoundedIcon color="inherit" />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+        </Hidden>
         <Outlet />
       </StyledBox>
     </ChatSocketProvider>

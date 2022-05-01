@@ -7,6 +7,7 @@ import HomePage from "src/pages/HomePage";
 import LoginPage from "src/pages/LoginPage";
 import PrivatePage from "src/pages/PrivatePage";
 
+
 const myRoutes: RouteObject[] = [
   {
     path: "/",

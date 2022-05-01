@@ -12,8 +12,8 @@ const GroupChatListContainer = () => {
   const rawList = useRecoilValue(chatListSelectorByType("group"));
   const [searchParams, setSearchParams] = useSearchParams();
   const [openCreateChat, setOpenCreateChat] = useState(false);
-  const chatId = useMemo(() => {
-    return searchParams.get("id");
+  const hash = useMemo(() => {
+    return searchParams.get("hash");
   }, [searchParams]);
 
   const toggleCreateChat = (open?: boolean) => {
@@ -21,16 +21,16 @@ const GroupChatListContainer = () => {
     else setOpenCreateChat(open);
   };
 
-  const handleOnClick = (id: number) => {
+  const handleOnClick = (newHash: string) => {
     const updatedParams = new URLSearchParams(searchParams.toString());
-    updatedParams.set("id", id.toString());
+    updatedParams.set("hash", newHash);
     setSearchParams(updatedParams);
   };
 
   return (
     <ChatList
       list={rawList}
-      chatId={chatId}
+      hash={hash}
       head={
         <>
           <Typography variant="subtitle2">Group</Typography>

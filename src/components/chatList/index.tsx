@@ -38,7 +38,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const ChatList = (props: ChatListProps) => {
-  const { list, children, head, itemOnClick, chatId } = props;
+  const { list, children, head, itemOnClick, hash } = props;
   const [keyword, setKeyword] = useState("");
   const filteredList = useMemo(() => {
     return list
@@ -99,7 +99,7 @@ const ChatList = (props: ChatListProps) => {
           <ChatItem
             key={ele.id}
             data={ele}
-            isActive={Number(chatId) === ele.id}
+            isActive={hash === ele.hash}
             handleOnClick={itemOnClick}
           />
         ))}
@@ -117,10 +117,10 @@ const ChatList = (props: ChatListProps) => {
 };
 
 export interface ChatListProps {
-  chatId: string | null;
+  hash: string | null;
   list: Data.Chat[];
   head: ReactNode;
-  itemOnClick: (chatId: number) => void;
+  itemOnClick: (hash: string) => void;
   children?: ReactNode;
 }
 
