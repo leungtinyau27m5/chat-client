@@ -53,6 +53,35 @@ const MessageHandler = (props: MessageHandlerProps) => {
       [messageList, setChatUnread, setMessageList, userData?.id]
     );
 
+  const handleMessageModified: SocketEvents.ListenEvents["message:modified"] =
+    useCallback(
+      (chatId, data) => {
+        const temp = { ...messageList };
+        const target = temp[chatId] ? [...temp[chatId]] : [];
+        data.forEach((ele) => {
+          switch (ele.actions) {
+            case "delete": {
+              const idx = target.findIndex((msg) => msg.id === ele.id);
+              console.log(idx);
+              if (idx !== -1) target.splice(idx, 1);
+              break;
+            }
+            case "edit": {
+              if (ele.message) target[ele.id].message = ele.message;
+              break;
+            }
+            default: {
+            }
+          }
+        });
+        setMessageList((state) => ({
+          ...state,
+          [chatId]: target,
+        }));
+      },
+      [messageList, setMessageList]
+    );
+
   const handleMessageList: SocketEvents.ListenEvents["message:list"] =
     useCallback(
       (code, res) => {
@@ -102,6 +131,13 @@ const MessageHandler = (props: MessageHandlerProps) => {
       wss.off("message:list", handleMessageList);
     };
   }, [handleMessageList, wss]);
+
+  useEffect(() => {
+    wss.on("message:modified", handleMessageModified);
+    return () => {
+      wss.off("message:modified", handleMessageModified);
+    };
+  }, [handleMessageModified]);
 
   return <></>;
 };

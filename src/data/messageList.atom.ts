@@ -1,7 +1,7 @@
 import { atom, DefaultValue, selectorFamily } from "recoil";
 import { Data } from "src/shared/data.proto";
 
-export type MessageAtom = { [key: number]: Data.Message[] };
+export type MessageAtom = { [chatId: number]: Data.Message[] };
 
 export const messageListAtom = atom<MessageAtom>({
   key: "messageListAtom",
@@ -9,7 +9,7 @@ export const messageListAtom = atom<MessageAtom>({
 });
 
 export const messageListMetaAtom = atom<{
-  [key: number]: {
+  [chatId: number]: {
     offset: number;
     total: number;
     page: number;

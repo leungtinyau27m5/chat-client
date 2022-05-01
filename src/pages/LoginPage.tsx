@@ -53,11 +53,12 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (!userData) return;
-    navigate("/", { replace: true });
+    navigate("/group", { replace: true });
   }, [navigate, userData]);
 
   useEffect(() => {
     if (!controlledSwiper) return;
+    if (controlledSwiper.destroyed) return;
     controlledSwiper.slideTo(activeForm);
   }, [controlledSwiper, activeForm]);
 

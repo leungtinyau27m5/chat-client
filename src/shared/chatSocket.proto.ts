@@ -34,6 +34,15 @@ export declare module SocketEvents {
             };
           }
     ) => void;
+    "message:delete": (code: SocketCodeMap, res: Error | number[]) => void;
+    "message:modified": (
+      chatId: number,
+      data: {
+        actions: "edit" | "delete";
+        id: number;
+        message?: string;
+      }[]
+    ) => void;
   }
   interface EmitEvents {
     "user:login": (token: string) => void;
@@ -46,6 +55,7 @@ export declare module SocketEvents {
         limit?: number;
       }
     ) => void;
+    "message:delete": (chatId: number, msgId: number[]) => void;
     "chat:create": (
       data: Data.CreateGroupChat,
       members: {
@@ -66,6 +76,7 @@ export enum SocketCodeMap {
   unauthorizedUser,
   unauthorizedRole,
   insertFail,
+  updateFail,
   unknown,
 }
 

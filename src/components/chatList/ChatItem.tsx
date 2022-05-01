@@ -8,6 +8,7 @@ import { userSelector } from "src/data/user.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
 
+
 const StyledItem = styled(ListItemButton)(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "auto 4fr auto",
@@ -81,12 +82,23 @@ const ChatItem = (props: ChatItemProps) => {
         <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
       </Box>
       <Box className="body">
-        <Typography variant="subtitle1" className="trim-text" fontWeight={400}>
+        <Typography
+          variant="subtitle1"
+          className="trim-text"
+          fontWeight={400}
+          title={data.name}
+        >
           {data.name}
         </Typography>
-        <Typography variant="caption" className="trim-text">
+        <Typography
+          variant="caption"
+          className="trim-text"
+          title={data.message || data.media || ""}
+        >
           {data
-            ? `${userData?.id === data.user_id ? "you: " : `${data.username}: `}${
+            ? `${
+                userData?.id === data.user_id ? "you: " : `${data.username}: `
+              }${
                 data.message
                   ? data.message
                   : data.media && data.meta

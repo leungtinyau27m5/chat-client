@@ -115,9 +115,9 @@ const MessageField = (props: MessageFieldProps) => {
           <Button variant="text" onClick={toggleEmojiPicker}>
             <InsertEmoticonRoundedIcon />
           </Button>
-          <Button variant="text">
+          {/* <Button variant="text">
             <AttachFileRoundedIcon />
-          </Button>
+          </Button> */}
         </Box>
         <Controller
           control={control}
