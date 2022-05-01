@@ -1,31 +1,25 @@
 import { RouteObject } from "react-router-dom";
-import ChatRoom from "src/components/chatRoom";
-import AccountPage from "src/pages/AccountPage";
-import GroupPage from "src/pages/GroupPage";
-import HomeDefault from "src/pages/HomeDefault";
-import HomePage from "src/pages/HomePage";
-import LoginPage from "src/pages/LoginPage";
-import PrivatePage from "src/pages/PrivatePage";
+import loadable from "@loadable/component";
 
+const HomePage = loadable(() => import("src/pages/HomePage"));
+const ChatRoom = loadable(() => import("src/components/chatRoom"));
+const AccountPage = loadable(() => import("src/pages/AccountPage"));
+const GroupPage = loadable(() => import("src/pages/GroupPage"));
+const LoginPage = loadable(() => import("src/pages/LoginPage"));
+const PrivatePage = loadable(() => import("src/pages/PrivatePage"));
 
 const myRoutes: RouteObject[] = [
   {
     path: "/",
     element: <HomePage />,
     children: [
+      // {
+      //   index: true,
+      //   element: <HomeDefault />,
+      // },
       {
         index: true,
-        element: <HomeDefault />,
-      },
-      {
-        path: "group",
         element: <GroupPage />,
-        children: [
-          {
-            index: true,
-            element: <ChatRoom />,
-          },
-        ],
       },
       {
         path: "private",

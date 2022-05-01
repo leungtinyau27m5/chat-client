@@ -127,7 +127,7 @@ const MainMenu = (props: MainMenuProps) => {
             <Box
               key={item.path}
               className={clsx("menu-item", {
-                active: location.pathname.match(item.path),
+                active: location.pathname === item.path,
               })}
             >
               <Link to={item.path}>

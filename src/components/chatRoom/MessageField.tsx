@@ -3,7 +3,6 @@ import { Box, Button, filledInputClasses, styled } from "@mui/material";
 import { StyledTextField } from "../styled/MyTextField";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
-import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import { Data } from "src/shared/data.proto";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Picker, { IEmojiData } from "emoji-picker-react";

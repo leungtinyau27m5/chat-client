@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Box, Drawer, Hidden } from "@mui/material";
-import { Outlet } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import MainMenu from "src/components/mainMenu";
 import MenuBoard from "src/components/mainMenu/MenuBoard";
-import UserStatus from "src/components/mainMenu/UserStatus";
+
 import { userSelector } from "src/data/user.atom";
-import GroupChatListContainer from "src/components/chatList/GroupChatListContainer";
 import { menuAtom } from "src/data/menu.atom";
+import loadable from "@loadable/component";
+import ChatRoom from "src/components/chatRoom";
+
+const UserStatus = loadable(() => import("src/components/mainMenu/UserStatus"));
+const GroupChatListContainer = loadable(
+  () => import("src/components/chatList/GroupChatListContainer")
+);
 
 const GroupPage = () => {
   const userData = useRecoilValue(userSelector);
@@ -48,7 +53,7 @@ const GroupPage = () => {
             </MainMenu>
           </Drawer>
         </Hidden>
-        <Outlet />
+        <ChatRoom />
       </>
     )
   );
