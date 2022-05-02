@@ -31,6 +31,10 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
     wss.emit("user:login", userData.token);
   }, [userData, wss]);
 
+  const getFriendList = useCallback(() => {
+    wss.emit("friend:list");
+  }, [wss]);
+
   const handleChatList: SocketEvents.ListenEvents["chat:list"] = useCallback(
     (code, res) => {
       if (res instanceof Error) {
@@ -102,6 +106,12 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
       wss.disconnect();
     };
   }, [userData, wss]);
+
+  useEffect(() => {
+    if (isLogin) {
+      getFriendList();
+    }
+  }, [isLogin, getFriendList]);
 
   return (
     <ChatSocketContext.Provider

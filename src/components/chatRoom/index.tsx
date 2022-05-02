@@ -1,4 +1,10 @@
-import { useEffect, useRef, useCallback, useLayoutEffect } from "react";
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -7,6 +13,7 @@ import {
   styled,
   Typography,
   Avatar,
+  Drawer,
 } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -27,11 +34,14 @@ import { messageListMetaSelectorByChatId } from "src/data/messageList.atom";
 import ScrollButton from "./ScrollButton";
 import { SocketEvents } from "src/shared/chatSocket.proto";
 import { userSelector } from "src/data/user.atom";
+import ChatMemberBoard from "./ChatMemberBoard";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
   flex: 1,
+  display: "flex",
   padding: `${theme.spacing(2)} 0`,
+  columnGap: 12,
   [theme.breakpoints.down("lg")]: {
     padding: 0,
   },
@@ -113,6 +123,7 @@ const ChatRoom = () => {
   const [roomScrollTop, setRoomScrollTop] = useRecoilState(
     chatRoomScrollTopSelectorById(id)
   );
+  const [openRoomBoard, setOpenRoomBoard] = useState(false);
   const setShowMenu = useSetRecoilState(menuAtom);
   const heightRef = useRef(roomScrollTop || 0);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -254,12 +265,15 @@ const ChatRoom = () => {
             </Box>
             {chatData && (
               <Box>
-                <Button color="secondary">
+                <Button
+                  color="secondary"
+                  onClick={() => setOpenRoomBoard(true)}
+                >
                   <PeopleAltRoundedIcon />
                 </Button>
-                <Button color="secondary">
+                {/* <Button color="secondary">
                   <CategoryRoundedIcon />
-                </Button>
+                </Button> */}
               </Box>
             )}
           </Box>
@@ -279,6 +293,22 @@ const ChatRoom = () => {
             ></ScrollButton>
           )}
         </Box>
+        {wss && chatData && (
+        <>
+            <Hidden lgDown>
+              <ChatMemberBoard chatData={chatData} wss={wss} />
+            </Hidden>
+            <Hidden lgUp>
+              <Drawer
+                open={openRoomBoard}
+                onClose={() => setOpenRoomBoard(false)}
+                anchor="right"
+              >
+                <ChatMemberBoard chatData={chatData} wss={wss} />
+              </Drawer>
+            </Hidden>
+          </>
+        )}
       </StyledBox>
     )
   );

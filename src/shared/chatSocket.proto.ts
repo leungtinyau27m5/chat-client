@@ -47,6 +47,17 @@ export declare module SocketEvents {
   interface EmitEvents {
     "user:login": (token: string) => void;
     "user:status": (status: Data.UserStatus) => void;
+    "chat:create": (
+      data: Data.CreateGroupChat,
+      members: {
+        email?: string;
+        userId?: number;
+        role: Data.ParticipantRole;
+      }[]
+    ) => void;
+    "friend:list": (offset?: number, limit?: number) => void;
+    "friend:add": (data: { email: string; markedName: string }[]) => void;
+    "friend:remove": (ids: number[]) => void;
     "message:send": (chatId: number, data: Data.SendMessage) => void;
     "message:list": (
       chatId: number,
@@ -56,14 +67,6 @@ export declare module SocketEvents {
       }
     ) => void;
     "message:delete": (chatId: number, msgId: number[]) => void;
-    "chat:create": (
-      data: Data.CreateGroupChat,
-      members: {
-        email?: string;
-        userId?: number;
-        role: Data.ParticipantRole;
-      }[]
-    ) => void;
   }
 }
 

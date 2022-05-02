@@ -19,11 +19,16 @@ import ChatSocketProvider from "src/providers/socket.io/chat";
 import { getCookie } from "src/utils/storages";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 
-const StyledBox = styled(Box)(() => ({
-  maxWidth: 1200,
+const StyledBox = styled(Box)(({ theme }) => ({
+  maxWidth: 1400,
   display: "flex",
   marginLeft: "auto",
   marginRight: "auto",
+  paddingLeft: 8,
+  paddingRight: 8,
+  [theme.breakpoints.down("sm")]: {
+    padding: 0,
+  },
 }));
 
 const HomePage = () => {

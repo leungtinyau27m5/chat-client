@@ -13,10 +13,6 @@ const myRoutes: RouteObject[] = [
     path: "/",
     element: <HomePage />,
     children: [
-      // {
-      //   index: true,
-      //   element: <HomeDefault />,
-      // },
       {
         index: true,
         element: <GroupPage />,
