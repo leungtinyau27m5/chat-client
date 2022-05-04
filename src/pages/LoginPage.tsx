@@ -53,7 +53,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (!userData) return;
-    navigate("/group", { replace: true });
+    navigate("/", { replace: true });
   }, [navigate, userData]);
 
   useEffect(() => {

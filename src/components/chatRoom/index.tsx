@@ -35,6 +35,7 @@ import ScrollButton from "./ScrollButton";
 import { SocketEvents } from "src/shared/chatSocket.proto";
 import { userSelector } from "src/data/user.atom";
 import ChatMemberBoard from "./ChatMemberBoard";
+import { memberListAtomSelectorByChatId } from "src/data/member.atom";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
@@ -115,6 +116,7 @@ const ChatRoom = () => {
   const [searchParams] = useSearchParams();
   const hash = searchParams.get("hash");
   const id = useRecoilValue(chatHashToIdSelector(hash));
+  const memberList = useRecoilValue(memberListAtomSelectorByChatId(id));
   const { wss, isLogin } = useChatSocketCtx();
   const userData = useRecoilValue(userSelector);
   const chatData = useRecoilValue(chatListSelectorById(id));
@@ -236,6 +238,13 @@ const ChatRoom = () => {
     };
   }, [setAppbar, chatData]);
 
+  useEffect(() => {
+    if (memberList.length === 0) {
+      wss.emit("member:list", id);
+      wss.emit("friend:listInChat", id);
+    }
+  }, [memberList, id, wss]);
+
   return (
     chatData && (
       <StyledBox className="chat-room">
@@ -294,9 +303,13 @@ const ChatRoom = () => {
           )}
         </Box>
         {wss && chatData && (
-        <>
+          <>
             <Hidden lgDown>
-              <ChatMemberBoard chatData={chatData} wss={wss} />
+              <ChatMemberBoard
+                chatData={chatData}
+                wss={wss}
+                list={memberList}
+              />
             </Hidden>
             <Hidden lgUp>
               <Drawer
@@ -304,7 +317,11 @@ const ChatRoom = () => {
                 onClose={() => setOpenRoomBoard(false)}
                 anchor="right"
               >
-                <ChatMemberBoard chatData={chatData} wss={wss} />
+                <ChatMemberBoard
+                  chatData={chatData}
+                  wss={wss}
+                  list={memberList}
+                />
               </Drawer>
             </Hidden>
           </>

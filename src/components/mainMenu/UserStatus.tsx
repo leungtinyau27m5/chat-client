@@ -18,6 +18,7 @@ import { getProfilePic } from "src/api/chat";
 import { UserState } from "src/data/user.atom";
 import { useChatSocketCtx } from "src/providers/socket.io/chat/context";
 import { Data } from "src/shared/data.proto";
+import AvatarContainer from "../styled/AvatarContainer";
 import { onlineStatus } from "./constants";
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -26,27 +27,30 @@ const StyledBox = styled(Box)(({ theme }) => ({
   alignItems: "center",
   rowGap: theme.spacing(1.1),
   "& .avatar-container": {
-    position: "relative",
     [`& .${avatarClasses.root}`]: {
       width: 110,
       height: 110,
     },
     "& .status-dot": {
-      position: "absolute",
       bottom: 10,
       right: 10,
-      width: 12,
-      height: 12,
-      padding: 1,
-      display: "flex",
-      borderRadius: "50%",
-      backgroundColor: "white",
-      "& > span": {
-        width: "100%",
-        height: "100%",
-        borderRadius: "inherit",
-      },
     },
+    // "& .status-dot": {
+    //   position: "absolute",
+    //   bottom: 10,
+    //   right: 10,
+    //   width: 12,
+    //   height: 12,
+    //   padding: 1,
+    //   display: "flex",
+    //   borderRadius: "50%",
+    //   backgroundColor: "white",
+    //   "& > span": {
+    //     width: "100%",
+    //     height: "100%",
+    //     borderRadius: "inherit",
+    //   },
+    // },
   },
   "& .status-inner": {
     width: "100%",
@@ -89,19 +93,10 @@ const UserStatus = (props: UserStatusProps) => {
 
   return (
     <StyledBox className="user-status-container">
-      <Box className="avatar-container">
-        <Avatar
-          src={userData.profile_pic ? getProfilePic(userData?.profile_pic) : ""}
-        />
-        <Box className="status-dot">
-          <Box
-            component="span"
-            sx={{
-              backgroundColor: alpha(statusColor, 1),
-            }}
-          />
-        </Box>
-      </Box>
+      <AvatarContainer
+        src={userData.profile_pic ? getProfilePic(userData?.profile_pic) : ""}
+        status={userData.status}
+      />
       <Typography variant="h5" align="center">
         {userData?.username}
       </Typography>

@@ -6,12 +6,42 @@ export declare module SocketEvents {
   interface ListenEvents {
     "user:login": (code: SocketCodeMap, res: Error | UserState.Atom) => void;
     "user:status": (code: SocketCodeMap, res?: Error | Data.UserStatus) => void;
+    "chat:create": (code: SocketCodeMap, res: Error | Data.Chat[]) => void;
+    "chat:invite": (id: number) => void;
+    "chat:get": (code: SocketCodeMap, res: Data.Chat[] | Error) => void;
     "chat:list": (
       code: SocketCodeMap,
       res?:
         | Error
         | {
             list: Data.Chat[];
+            meta: {
+              offset: number;
+              limit: number;
+              total: number;
+            };
+          }
+    ) => void;
+    "friend:list": (
+      code: SocketCodeMap,
+      res:
+        | Error
+        | {
+            list: Data.Friend[];
+            meta: {
+              offset: number;
+              limit: number;
+              total: number;
+            };
+          }
+    ) => void;
+    "member:list": (
+      code: SocketCodeMap,
+      res:
+        | Error
+        | {
+            id: number;
+            list: any[];
             meta: {
               offset: number;
               limit: number;
@@ -55,9 +85,12 @@ export declare module SocketEvents {
         role: Data.ParticipantRole;
       }[]
     ) => void;
+    "chat:get": (chatId: number) => void;
+    "friend:listInChat": (chatId: number) => void;
     "friend:list": (offset?: number, limit?: number) => void;
     "friend:add": (data: { email: string; markedName: string }[]) => void;
     "friend:remove": (ids: number[]) => void;
+    "member:list": (id: number) => void;
     "message:send": (chatId: number, data: Data.SendMessage) => void;
     "message:list": (
       chatId: number,

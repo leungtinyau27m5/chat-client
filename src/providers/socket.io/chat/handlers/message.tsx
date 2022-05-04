@@ -137,7 +137,7 @@ const MessageHandler = (props: MessageHandlerProps) => {
     return () => {
       wss.off("message:modified", handleMessageModified);
     };
-  }, [handleMessageModified]);
+  }, [handleMessageModified, wss]);
 
   return <></>;
 };

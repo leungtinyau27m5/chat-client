@@ -9,18 +9,18 @@ import {
   DialogTitle,
   Grid,
   IconButton,
-  MenuItem,
   styled,
   textFieldClasses,
   Typography,
   typographyClasses,
 } from "@mui/material";
-import { StyledSelect, StyledTextField } from "../styled/MyTextField";
+import { StyledTextField } from "../styled/MyTextField";
 import FileUploader from "src/components/forms/FileUploader";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Controller as SwiperController } from "swiper";
 import type { Swiper } from "swiper";
+import "swiper/css";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import {
   Controller,

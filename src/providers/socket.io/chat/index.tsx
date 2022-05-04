@@ -11,6 +11,8 @@ import { Data } from "src/shared/data.proto";
 import MessageHandler from "./handlers/message";
 import ChatHandler from "./handlers/chat";
 import UserHandler from "./handlers/user";
+import FriendHandler from "./handlers/friend";
+import MemberHandler from "./handlers/member";
 
 const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const { current: wss } = useRef<MySocket>(
@@ -125,6 +127,8 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
       {wss && <MessageHandler wss={wss} />}
       {wss && <ChatHandler wss={wss} />}
       {wss && <UserHandler wss={wss} />}
+      {wss && <FriendHandler wss={wss} />}
+      {wss && <MemberHandler wss={wss} />}
     </ChatSocketContext.Provider>
   );
 };

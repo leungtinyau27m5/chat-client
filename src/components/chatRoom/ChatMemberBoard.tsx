@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Box,
   styled,
@@ -8,13 +8,22 @@ import {
   TextField,
   List,
   ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { Data } from "src/shared/data.proto";
 import { getProfilePic } from "src/api/chat";
 import { useRecoilValue } from "recoil";
-import { friendAtom } from "src/data/friend.atom";
+import { friendAtom, friendSelectorById } from "src/data/friend.atom";
 import EditableField from "../styled/EditableField";
 import { MySocket } from "src/shared/chatSocket.proto";
+import { Link } from "react-router-dom";
+import AvatarContainer from "../styled/AvatarContainer";
+import {
+  memberListAtomSelectorByChatId,
+  memberMetaSelectorByChatId,
+} from "src/data/member.atom";
+import { userSelector } from "src/data/user.atom";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: "#EDF0F6",
@@ -44,12 +53,33 @@ const StyledBox = styled(Box)(({ theme }) => ({
       height: 64,
     },
   },
-  "& > .board-body": {},
+  "& > .board-body": {
+    "& > .title": {
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+    },
+    "& .member-item": {
+      borderRadius: 8,
+      "&:not(:last-of-type)": {},
+      "& .desc": {
+        display: "grid",
+        gridTemplateRows: "20px 20px",
+        rowGap: 4,
+      },
+    },
+  },
 }));
 
 const ChatMemberBoard = (props: ChatMemberBoardProps) => {
-  const { chatData, wss } = props;
-  const firends = useRecoilValue(friendAtom);
+  const { chatData, list, wss } = props;
+  const userData = useRecoilValue(userSelector);
+  const memberMeta = useRecoilValue(memberMetaSelectorByChatId(chatData.id));
+
+  const onlineMemberList = useMemo(() => {
+    return list.filter((ele) => !["offline", "hide"].includes(ele.status));
+  }, [list]);
 
   const handleNewGroupName = (value: string) => {
     console.log(value);
@@ -79,22 +109,64 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
         />
       </Box>
       <Box
-        className="board-section"
+        className="board-section board-body"
         sx={{ alignItems: "flex-start !important" }}
       >
         <Typography variant="subtitle2" align="left">
           Friends
         </Typography>
-        <List></List>
+        <List sx={{ width: "100%" }}></List>
       </Box>
       <Box
-        className="board-section"
+        className="board-section board-body"
         sx={{ alignItems: "flex-start !important" }}
       >
-        <Typography variant="subtitle2" align="left">
-          Members
-        </Typography>
-        <List></List>
+        <Box className="title">
+          <Typography variant="subtitle2" align="left">
+            Members
+          </Typography>
+          <Typography variant="caption" align="right">
+            {onlineMemberList.length} / {memberMeta?.total}
+          </Typography>
+        </Box>
+        <List sx={{ width: "100%" }}>
+          {list.map((ele) => (
+            <Link
+              to={`/private?hash=${ele.hash}`}
+              key={ele.id}
+              style={{
+                pointerEvents: userData?.id === ele.id ? "none" : "auto",
+              }}
+            >
+              <ListItemButton className="member-item">
+                <ListItemIcon>
+                  <AvatarContainer
+                    src={ele.profile_pic ? getProfilePic(ele.profile_pic) : ""}
+                    avatarProps={{
+                      sx: {
+                        width: 32,
+                        height: 32,
+                      },
+                    }}
+                    status={ele.status}
+                  />
+                </ListItemIcon>
+                <Box className="desc">
+                  <Typography variant="body1" title={ele.username}>
+                    {ele.username} {userData?.id === ele.id ? "(Me)" : ""}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "rgba(128, 128, 128, 1)" }}
+                    title={ele.bio || ""}
+                  >
+                    {ele.bio?.substring(0, 15)}
+                  </Typography>
+                </Box>
+              </ListItemButton>
+            </Link>
+          ))}
+        </List>
       </Box>
     </StyledBox>
   );
@@ -102,6 +174,7 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
 
 export interface ChatMemberBoardProps {
   chatData: Data.Chat;
+  list: Data.Member[];
   wss: MySocket;
 }
 

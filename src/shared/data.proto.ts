@@ -42,6 +42,26 @@ export declare namespace Data {
     profile_pic: string | null;
     status: UserStatus;
   }
+  interface Friend {
+    user_id: number;
+    marked_name: string;
+    username: string;
+    status: UserStatus;
+    profile_pic: string;
+    bio: string;
+    created: string;
+  }
+  interface Member {
+    id: number;
+    hash: string;
+    last_seen: null | string;
+    bio: null | string;
+    joinIn: string;
+    profile_pic: null | string;
+    role: ParticipantRole;
+    status: UserStatus;
+    username: string;
+  }
   type SendMessage = Pick<Message, "message" | "media" | "meta">;
   type CreateGroupChat = Pick<Chat, "name" | "profile_pic" | "type" | "bio">;
 }
