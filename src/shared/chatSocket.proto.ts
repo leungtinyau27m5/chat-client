@@ -35,6 +35,11 @@ export declare module SocketEvents {
             };
           }
     ) => void;
+    "friend:status": (res: {
+      userId: number;
+      userHash: string;
+      status: Data.UserStatus;
+    }) => void;
     "member:list": (
       code: SocketCodeMap,
       res:

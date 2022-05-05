@@ -35,7 +35,7 @@ const PrivatePage = () => {
           </MainMenu>
         </Hidden>
         <Hidden mdUp>
-          <Drawer anchor="left" open={showMenu} onClick={toggleMenu}>
+          <Drawer anchor="left" open={showMenu} onClose={toggleMenu}>
             <MainMenu>
               <MenuBoard>
                 <Box className="header">

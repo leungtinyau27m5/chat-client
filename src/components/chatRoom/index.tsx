@@ -239,6 +239,7 @@ const ChatRoom = () => {
   }, [setAppbar, chatData]);
 
   useEffect(() => {
+    if (id === -1) return;
     if (memberList.length === 0) {
       wss.emit("member:list", id);
       wss.emit("friend:listInChat", id);

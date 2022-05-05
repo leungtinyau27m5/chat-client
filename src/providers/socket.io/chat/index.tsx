@@ -102,12 +102,10 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   }, [handleChatList, wss]);
 
   useEffect(() => {
+    if (connected) return;
     if (!userData) return;
     wss.connect();
-    return () => {
-      wss.disconnect();
-    };
-  }, [userData, wss]);
+  }, [wss, connected, userData]);
 
   useEffect(() => {
     if (isLogin) {
