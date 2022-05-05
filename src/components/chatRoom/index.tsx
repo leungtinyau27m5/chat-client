@@ -36,6 +36,7 @@ import { SocketEvents } from "src/shared/chatSocket.proto";
 import { userSelector } from "src/data/user.atom";
 import ChatMemberBoard from "./ChatMemberBoard";
 import { memberListAtomSelectorByChatId } from "src/data/member.atom";
+import { getChatProfilePic } from "src/api/chat";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   height: "-webkit-fill-available",
@@ -263,7 +264,11 @@ const ChatRoom = () => {
               {chatData && (
                 <>
                   <Avatar
-                    src={chatData.profile_pic || ""}
+                    src={
+                      chatData.profile_pic
+                        ? getChatProfilePic(chatData.profile_pic)
+                        : ""
+                    }
                     sx={{
                       width: 34,
                       height: 34,

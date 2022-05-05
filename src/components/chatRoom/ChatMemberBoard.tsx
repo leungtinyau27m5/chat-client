@@ -15,18 +15,14 @@ import {
   List,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
 } from "@mui/material";
 import { Data } from "src/shared/data.proto";
-import { getProfilePic } from "src/api/chat";
+import { getChatProfilePic, getProfilePic } from "src/api/chat";
 import { useRecoilValue } from "recoil";
-import { friendAtom, friendSelectorById } from "src/data/friend.atom";
 import EditableField from "../styled/EditableField";
 import { MySocket } from "src/shared/chatSocket.proto";
-import { Link } from "react-router-dom";
 import AvatarContainer from "../styled/AvatarContainer";
 import {
-  memberListAtomSelectorByChatId,
   memberMetaSelectorByChatId,
 } from "src/data/member.atom";
 import { userSelector } from "src/data/user.atom";
@@ -122,7 +118,9 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
     <StyledBox className="chat-member-board">
       <Box className="board-head board-section">
         <Avatar
-          src={chatData.profile_pic ? getProfilePic(chatData.profile_pic) : ""}
+          src={
+            chatData.profile_pic ? getChatProfilePic(chatData.profile_pic) : ""
+          }
           title={chatData.name}
         />
         <EditableField
