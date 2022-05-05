@@ -7,10 +7,10 @@ export const menuItems = [
     path: "/",
     icon: <GroupsRoundedIcon />,
   },
-  {
-    path: "/private",
-    icon: <AssistantRoundedIcon />,
-  },
+  // {
+  //   path: "/private",
+  //   icon: <AssistantRoundedIcon />,
+  // },
   {
     path: "/friends",
     icon: <PeopleRoundedIcon />,

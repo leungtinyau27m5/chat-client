@@ -44,11 +44,9 @@ const FriendHandler = (props: FriendHandlerProps) => {
               variant: "info",
               autoHideDuration: 3500,
               action: () => (
-                <Link to={`/private?hash=${userHash}`}>
-                  <IconButton>
-                    <CommentIcon fontSize="small" sx={{ color: "white" }} />
-                  </IconButton>
-                </Link>
+                <IconButton>
+                  <CommentIcon fontSize="small" sx={{ color: "white" }} />
+                </IconButton>
               ),
             });
           }

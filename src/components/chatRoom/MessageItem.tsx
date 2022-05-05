@@ -163,15 +163,16 @@ const MessageItem = memo(
           <Box className="message-wrapper-outer">
             <Box className="message-meta">
               {!isMe && (
-                <Link to={`/private?id=${data.sender_id}`}>
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="blueviolet"
-                  >
-                    {data.username},&nbsp;
-                  </Typography>
-                </Link>
+                // <Link to={`/private?hash=${data.hash}`} key={data.hash}>
+                <Typography
+                  key={data.hash}
+                  component="span"
+                  variant="caption"
+                  color="blueviolet"
+                >
+                  {data.username},&nbsp;
+                </Typography>
+                // </Link>
               )}
               <Typography component="span" variant="caption">
                 {msgDate.time}

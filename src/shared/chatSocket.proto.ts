@@ -91,11 +91,16 @@ export declare module SocketEvents {
       }[]
     ) => void;
     "chat:get": (chatId: number) => void;
+    "chat:create/private": (data: { hash: string }) => void;
+    "chat:get/private": (userHash: string) => void;
     "friend:listInChat": (chatId: number) => void;
     "friend:list": (offset?: number, limit?: number) => void;
     "friend:add": (data: { email: string; markedName: string }[]) => void;
     "friend:remove": (ids: number[]) => void;
-    "member:list": (id: number) => void;
+    "member:list": (
+      id: number,
+      options: { offset?: number; limit?: number }
+    ) => void;
     "message:send": (chatId: number, data: Data.SendMessage) => void;
     "message:list": (
       chatId: number,

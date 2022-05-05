@@ -169,8 +169,9 @@ const ChatRoom = () => {
 
   useEffect(() => {
     if (!isLogin) return;
+    if (id === -1) return;
     if (!messageMeta) getList(0);
-  }, [getList, isLogin, messageMeta]);
+  }, [getList, id, isLogin, messageMeta]);
 
   useEffect(() => {
     const body = bodyRef.current;
@@ -241,7 +242,9 @@ const ChatRoom = () => {
   useEffect(() => {
     if (id === -1) return;
     if (memberList.length === 0) {
-      wss.emit("member:list", id);
+      wss.emit("member:list", id, {
+        offset: 0,
+      });
       wss.emit("friend:listInChat", id);
     }
   }, [memberList, id, wss]);

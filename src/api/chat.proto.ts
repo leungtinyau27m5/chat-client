@@ -28,7 +28,7 @@ export declare namespace ChatAxios {
       email: string;
       username: string;
       password: string;
-      profilePic: null | string;
+      profilePic: null | File;
     }
     interface Response {
       code: ExpressCodeMap;

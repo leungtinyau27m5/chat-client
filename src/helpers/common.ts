@@ -18,3 +18,11 @@ export const getEmailRegex = () =>
 
 export const getPasswordRegex = () =>
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,16})/;
+
+export const getFormData = (data: object) => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  return formData;
+};

@@ -1,4 +1,10 @@
-import { useEffect, useMemo } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Box,
   styled,
@@ -76,6 +82,7 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
   const { chatData, list, wss } = props;
   const userData = useRecoilValue(userSelector);
   const memberMeta = useRecoilValue(memberMetaSelectorByChatId(chatData.id));
+  const memberListRef = useRef<HTMLUListElement>(null);
 
   const onlineMemberList = useMemo(() => {
     return list.filter((ele) => !["offline", "hide"].includes(ele.status));
@@ -84,6 +91,32 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
   const handleNewGroupName = (value: string) => {
     console.log(value);
   };
+
+  const handleScroll = useCallback(
+    (evt: Event) => {
+      if (!memberMeta) return;
+      const target = evt.target as HTMLElement;
+      const scrollPos =
+        target.scrollTop + target.getBoundingClientRect().height;
+      if (Math.floor(scrollPos) === Math.floor(target.scrollHeight)) {
+        if (memberMeta.offset < memberMeta.total) {
+          wss.emit("member:list", chatData.id, {
+            offset: memberMeta.offset + 20,
+          });
+        }
+      }
+    },
+    [chatData.id, memberMeta, wss]
+  );
+
+  useLayoutEffect(() => {
+    if (!memberListRef.current) return;
+    const ref = memberListRef.current;
+    ref.addEventListener("scroll", handleScroll);
+    return () => {
+      ref.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <StyledBox className="chat-member-board">
@@ -129,42 +162,44 @@ const ChatMemberBoard = (props: ChatMemberBoardProps) => {
             {onlineMemberList.length} / {memberMeta?.total}
           </Typography>
         </Box>
-        <List sx={{ width: "100%" }}>
+        <List
+          sx={{ width: "100%", maxHeight: "50vh", overflowY: "auto" }}
+          className="min-scrollbar"
+          ref={memberListRef}
+        >
           {list.map((ele) => (
-            <Link
-              to={`/private?hash=${ele.hash}`}
+            <ListItemButton
+              className="member-item"
               key={ele.id}
               style={{
                 pointerEvents: userData?.id === ele.id ? "none" : "auto",
               }}
             >
-              <ListItemButton className="member-item">
-                <ListItemIcon>
-                  <AvatarContainer
-                    src={ele.profile_pic ? getProfilePic(ele.profile_pic) : ""}
-                    avatarProps={{
-                      sx: {
-                        width: 32,
-                        height: 32,
-                      },
-                    }}
-                    status={ele.status}
-                  />
-                </ListItemIcon>
-                <Box className="desc">
-                  <Typography variant="body1" title={ele.username}>
-                    {ele.username} {userData?.id === ele.id ? "(Me)" : ""}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "rgba(128, 128, 128, 1)" }}
-                    title={ele.bio || ""}
-                  >
-                    {ele.bio?.substring(0, 15)}
-                  </Typography>
-                </Box>
-              </ListItemButton>
-            </Link>
+              <ListItemIcon>
+                <AvatarContainer
+                  src={ele.profile_pic ? getProfilePic(ele.profile_pic) : ""}
+                  avatarProps={{
+                    sx: {
+                      width: 32,
+                      height: 32,
+                    },
+                  }}
+                  status={ele.status}
+                />
+              </ListItemIcon>
+              <Box className="desc">
+                <Typography variant="body1" title={ele.username}>
+                  {ele.username} {userData?.id === ele.id ? "(Me)" : ""}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "rgba(128, 128, 128, 1)" }}
+                  title={ele.bio || ""}
+                >
+                  {ele.bio?.substring(0, 15)}
+                </Typography>
+              </Box>
+            </ListItemButton>
           ))}
         </List>
       </Box>

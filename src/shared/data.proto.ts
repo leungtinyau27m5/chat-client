@@ -25,6 +25,7 @@ export declare namespace Data {
   interface Message {
     id: number;
     sender_id: number;
+    hash: string;
     chat_id: number;
     message: string | null;
     media: string | null; // 2048

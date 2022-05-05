@@ -1,12 +1,13 @@
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect } from "react";
 import { useSetRecoilState } from "recoil";
-import { chatListAtom } from "src/data/chatList.atom";
+import { chatListAtom, chatListMetaAtom } from "src/data/chatList.atom";
 import { MySocket, SocketEvents } from "src/shared/chatSocket.proto";
 
 const ChatHandler = (props: ChatHandlerProps) => {
   const { wss } = props;
   const setChatList = useSetRecoilState(chatListAtom);
+  const setChatListMeta = useSetRecoilState(chatListMetaAtom);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleMessageUpdate: SocketEvents.ListenEvents["message:update"] =

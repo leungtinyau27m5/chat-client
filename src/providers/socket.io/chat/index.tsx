@@ -6,7 +6,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userSelector } from "src/data/user.atom";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { Button } from "@mui/material";
-import { chatListAtom } from "src/data/chatList.atom";
+import { chatListAtom, chatListMetaAtom } from "src/data/chatList.atom";
 import { Data } from "src/shared/data.proto";
 import MessageHandler from "./handlers/message";
 import ChatHandler from "./handlers/chat";
@@ -27,6 +27,7 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
   const userData = useRecoilValue(userSelector);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const setChatList = useSetRecoilState(chatListAtom);
+  const setChatListMeta = useSetRecoilState(chatListMetaAtom);
 
   const emitLogin = useCallback(() => {
     if (!userData) return;
@@ -44,17 +45,25 @@ const ChatSocketProvider = (props: ChatSocketProviderProps) => {
         return;
       }
       if (res && "list" in res) {
+        let newData = {} as { [key: number]: Data.Chat };
+        res.list.forEach((ele) => (newData[ele.id] = ele));
         setChatList((state) => {
-          let newData = {} as { [key: number]: Data.Chat };
-          res.list.forEach((ele) => (newData[ele.id] = ele));
           return {
             ...newData,
             ...state,
           };
         });
+        if (res && "meta" in res) {
+          const { offset, total, limit } = res.meta;
+          setChatListMeta({
+            offset,
+            total,
+            limit,
+          });
+        }
       }
     },
-    [setChatList]
+    [setChatList, setChatListMeta]
   );
 
   useEffect(() => {

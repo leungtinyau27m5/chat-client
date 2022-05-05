@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Avatar,
   Box,
@@ -73,17 +73,20 @@ const RegisterForm = (props: RegisterFormProps) => {
   const { switchForm } = props;
   const { handleSubmit, control } = useForm<RegisterFormState>();
   const [showPassword, setShowPassword] = useState(false);
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState<File | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const avatarUrl = useMemo(() => {
+    return avatar ? URL.createObjectURL(avatar) : "";
+  }, [avatar]);
 
   const togglePassword = () => setShowPassword((state) => !state);
 
   const handleFilesChange = (evt: FileList | null) => {
     if (evt instanceof FileList && evt.length > 0) {
-      setAvatar(URL.createObjectURL(evt[0]));
+      setAvatar(evt[0]);
       return;
     }
-    setAvatar("");
+    setAvatar(null);
   };
 
   const submitRegisterForm: SubmitHandler<RegisterFormState> = async (evt) => {
@@ -92,7 +95,7 @@ const RegisterForm = (props: RegisterFormProps) => {
         email: evt.email,
         password: evt.password,
         username: evt.username,
-        profilePic: avatar === "" ? null : avatar,
+        profilePic: avatar ? avatar : null,
       });
       const { message } = res.data;
       enqueueSnackbar(message, {
@@ -143,7 +146,7 @@ const RegisterForm = (props: RegisterFormProps) => {
             {(fileList) =>
               fileList ? (
                 <Avatar
-                  src={avatar}
+                  src={avatarUrl}
                   sx={{
                     width: 120,
                     height: 120,
@@ -277,7 +280,7 @@ export interface RegisterFormState {
   username: string;
   email: string;
   password: string;
-  profilePic: string | null;
+  profilePic: File | null;
 }
 
 export default RegisterForm;

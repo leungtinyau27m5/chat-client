@@ -1,19 +1,29 @@
 import { atom, DefaultValue, selectorFamily } from "recoil";
 import { Data } from "src/shared/data.proto";
 
-export const chatListAtom = atom<{ [key: number]: Data.Chat }>({
+export const chatListAtom = atom<{ [chatId: number]: Data.Chat }>({
   key: "chatListAtom",
   default: {},
 });
 
-export const chatUnreadAtom = atom<{ [key: number]: number[] }>({
+export const chatUnreadAtom = atom<{ [chatId: number]: number[] }>({
   key: "chatUnReadAtom",
   default: {},
 });
 
-export const chatRoomScrollTopAtom = atom<{ [key: number]: number | null }>({
+export const chatRoomScrollTopAtom = atom<{ [chatId: number]: number | null }>({
   key: "chatRoomScrollTopAtom",
   default: {},
+});
+
+
+export const chatListMetaAtom = atom<{
+  offset: number;
+  total: number;
+  limit: number;
+} | null>({
+  key: "chatListMetaAtom",
+  default: null,
 });
 
 export const chatHashToIdSelector = selectorFamily<number, string | null>({
@@ -27,6 +37,27 @@ export const chatHashToIdSelector = selectorFamily<number, string | null>({
         if (data[key].hash === hash) return Number(key);
       }
       return -1;
+    },
+});
+
+export const chatSelectorByHash = selectorFamily<
+  Data.Chat | null,
+  string | null
+>({
+  key: "chatSelectorByHash",
+  get:
+    (hash) =>
+    ({ get }) => {
+      if (!hash) return null;
+      const data = get(chatListAtom);
+      const target = Object.entries(data).find(
+        ([key, value]) => value.hash === hash
+      );
+      if (target) {
+        const [, result] = target;
+        return result;
+      }
+      return null;
     },
 });
 

@@ -2,12 +2,11 @@ import { Avatar, Box, ListItemButton, styled, Typography } from "@mui/material";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { getProfilePic } from "src/api/chat";
+import { getChatProfilePic, getProfilePic } from "src/api/chat";
 import { chatUnreadSelectorById } from "src/data/chatList.atom";
 import { userSelector } from "src/data/user.atom";
 import { getMsgDate } from "src/helpers/chatHelper";
 import { Data } from "src/shared/data.proto";
-
 
 const StyledItem = styled(ListItemButton)(({ theme }) => ({
   display: "grid",
@@ -79,7 +78,9 @@ const ChatItem = (props: ChatItemProps) => {
       onClick={() => handleOnClick(data.hash)}
     >
       <Box className="head">
-        <Avatar src={data.profile_pic ? getProfilePic(data.profile_pic) : ""} />
+        <Avatar
+          src={data.profile_pic ? getChatProfilePic(data.profile_pic) : ""}
+        />
       </Box>
       <Box className="body">
         <Typography

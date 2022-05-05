@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { StyledTextField } from "../styled/MyTextField";
 import FileUploader from "src/components/forms/FileUploader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import clsx from "clsx";
 import { Controller as SwiperController } from "swiper";
 import type { Swiper } from "swiper";
@@ -36,6 +36,8 @@ import { useSnackbar } from "notistack";
 import { useChatSocketCtx } from "src/providers/socket.io/chat/context";
 import { Data } from "src/shared/data.proto";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { postProfilePic } from "src/api/chat";
+import { ExpressCodeMap } from "src/api/express.proto";
 
 const StyledForm = styled(Box)(({ theme }) => ({
   overflow: "hidden",
@@ -103,7 +105,7 @@ const StyledForm = styled(Box)(({ theme }) => ({
 const CreateGroupChat = (props: CreateGroupChatProps) => {
   const { open, toggle } = props;
   const { wss } = useChatSocketCtx();
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [step, setStep] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset } = useForm<CreateGroupChatFormState>({
@@ -118,13 +120,16 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
     control,
     name: "members",
   });
+  const avatarUrl = useMemo(() => {
+    return avatar ? URL.createObjectURL(avatar) : "";
+  }, [avatar]);
 
   const handleFilesChange = (evt: FileList | null) => {
     if (evt instanceof FileList && evt.length > 0) {
-      setAvatar(URL.createObjectURL(evt[0]));
+      setAvatar(evt[0]);
       return;
     }
-    setAvatar("");
+    setAvatar(null);
   };
 
   const changeSteps = (n: number) => setStep(n);
@@ -136,20 +141,28 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
     });
   };
 
-  const submitCreateGroupForm: SubmitHandler<CreateGroupChatFormState> = (
+  const submitCreateGroupForm: SubmitHandler<CreateGroupChatFormState> = async (
     evt
   ) => {
     console.log(evt);
     const { bio, members, name } = evt;
+    let imageName = null;
     if (name === "") {
       enqueueSnackbar("Group must be named!", { variant: "warning" });
       setStep(0);
       return;
     }
+    if (avatar) {
+      const res = await postProfilePic({ profilePic: avatar });
+      const { code, file } = res.data;
+      if (code === ExpressCodeMap.success && file) {
+        imageName = file;
+      }
+    }
     wss.emit(
       "chat:create",
       {
-        profile_pic: avatar || null,
+        profile_pic: imageName,
         name,
         bio,
         type: "group",
@@ -230,7 +243,7 @@ const CreateGroupChat = (props: CreateGroupChatProps) => {
                     {(fileList) =>
                       fileList ? (
                         <Avatar
-                          src={avatar}
+                          src={avatarUrl}
                           sx={{
                             width: 120,
                             height: 120,
